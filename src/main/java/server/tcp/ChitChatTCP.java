@@ -2,6 +2,8 @@ package server.tcp;
 
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
@@ -14,7 +16,10 @@ public class ChitChatTCP implements Runnable {
 
     private int port;
     private ServerSocket chitChatServer;
+    //keep each Socket
     private List<Socket> connectingClientList = new ArrayList();
+    private List<InputStream> clientsInputStreamList = new ArrayList<InputStream>();
+    private List<OutputStream> clientsOutputStreamList = new ArrayList<OutputStream>();
 
 
     public ChitChatTCP(int port) {
@@ -40,8 +45,12 @@ public class ChitChatTCP implements Runnable {
                 Socket clientSocket = chitChatServer.accept();
                 //add socket into list.
                 connectingClientList.add(clientSocket);
+                clientsInputStreamList.add(clientSocket.getInputStream());
+                clientsOutputStreamList.add(clientSocket.getOutputStream());
                 //start servicing client.
-                new Thread(new ChitChatService(clientSocket)).start();
+                new Thread(new ChitChatService(connectingClientList,clientsInputStreamList,clientsOutputStreamList)).start();
+
+
             } catch (IOException e) {
                 e.printStackTrace();
                 System.out.println(e.getMessage());
