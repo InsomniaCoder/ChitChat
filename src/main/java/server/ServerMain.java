@@ -1,4 +1,4 @@
-package main.java.server;
+package server;
 
 import javax.swing.*;
 
@@ -30,14 +30,14 @@ public class ServerMain {
 
         int portNumber = 0;
         try {
-             portNumber = Integer.valueOf(port);
+            portNumber = Integer.valueOf(port);
             //check if the port is valid for network protocol
-            if( portNumber <= 1024 && portNumber > 65535  ){
+            if (portNumber <= 1024 && portNumber > 65535) {
                 System.out.println("Port number is incorrect, port should be between 49151 and 65535");
                 System.exit(-1);
             }
-        } catch (NumberFormatException e){
-            System.out.println(e.getMessage()+" Please enter port number in the right format");
+        } catch (NumberFormatException e) {
+            System.out.println(e.getMessage() + " Please enter port number in the right format");
             System.exit(-1);
         }
 
