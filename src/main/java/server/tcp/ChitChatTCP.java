@@ -17,9 +17,7 @@ public class ChitChatTCP implements Runnable {
     private int port;
     private ServerSocket chitChatServer;
     //keep each Socket
-    private List<Socket> connectingClientList = new ArrayList();
-    private List<InputStream> clientsInputStreamList = new ArrayList<InputStream>();
-    private List<OutputStream> clientsOutputStreamList = new ArrayList<OutputStream>();
+    private List<ClientContact> connectingClientList = new ArrayList<ClientContact>();
 
 
     public ChitChatTCP(int port) {
@@ -43,14 +41,13 @@ public class ChitChatTCP implements Runnable {
             try {
                 //wait until client connects and get Socket instance.
                 Socket clientSocket = chitChatServer.accept();
-                //add socket into list.
-                connectingClientList.add(clientSocket);
-                clientsInputStreamList.add(clientSocket.getInputStream());
-                clientsOutputStreamList.add(clientSocket.getOutputStream());
+
+                //create ClientContact class contains everything needed for contacting with client.
+                ClientContact clientContact = new ClientContact(clientSocket, clientSocket.getInputStream(), clientSocket.getOutputStream());
+                //add it to the list
+                connectingClientList.add(clientContact);
                 //start servicing client.
-                new Thread(new ChitChatService(connectingClientList,clientsInputStreamList,clientsOutputStreamList)).start();
-
-
+                new Thread(new ChitChatService(clientSocket,connectingClientList)).start();
             } catch (IOException e) {
                 e.printStackTrace();
                 System.out.println(e.getMessage());

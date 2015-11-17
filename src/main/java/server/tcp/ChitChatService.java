@@ -14,18 +14,20 @@ import java.util.List;
  */
 public class ChitChatService implements Runnable {
 
-    List<Socket> connectingClientList;
-    List<InputStream> clientsInputStreamList;
-    List<OutputStream> clientsOutputStreamList;
+    Socket socket;
+    List<ClientContact> connectingClientList;
 
-    public ChitChatService(List<Socket> connectingClientList, List<InputStream> clientsInputStreamList, List<OutputStream> clientsOutputStreamList) {
+    public ChitChatService(Socket clientSocket, List<ClientContact> connectingClientList) {
+        this.socket = clientSocket;
         this.connectingClientList = connectingClientList;
-        this.clientsInputStreamList = clientsInputStreamList;
-        this.clientsOutputStreamList = clientsOutputStreamList;
     }
 
     @Override
     public void run() {
+
+
+
+
 
     }
 }
