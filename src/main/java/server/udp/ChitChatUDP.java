@@ -1,14 +1,12 @@
 package server.udp;
 
-import server.ChitChatServer;
 
 import java.net.DatagramSocket;
 
 /**
  * Created by PorPaul on 17/11/2558.
  */
-public class ChitChatUDP implements ChitChatServer, Runnable
-{
+public class ChitChatUDP implements Runnable {
     private int port;
     private DatagramSocket chitchatServer;
 
@@ -20,4 +18,5 @@ public class ChitChatUDP implements ChitChatServer, Runnable
     public void run() {
 
     }
+
 }
