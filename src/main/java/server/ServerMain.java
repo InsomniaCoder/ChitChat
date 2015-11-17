@@ -1,5 +1,7 @@
 package server;
 
+import server.tcp.ChitChatTCP;
+
 import javax.swing.*;
 
 /**
@@ -18,12 +20,14 @@ public class ServerMain {
         //get port number form server admin
         String port = JOptionPane.showInputDialog("Welcome to ChitChat! Please Enter port number : ");
 
+        //cast String to int port and validate it
         int portNumber = castAndValidatePortNumber(port);
 
-//        ChitChatTCP chitChatServer = new ChitChatTCP(portNumber);
-//        Thread serverThread = new Thread(chitChatServer);
-//        serverThread.start();
-//        serverThread.join();
+        //move the program to Server thread
+        Thread serverThread = new Thread(new ChitChatTCP(portNumber));
+        serverThread.start();
+        //wait while program is running
+        serverThread.join();
     }
 
     private static int castAndValidatePortNumber(String port) {
