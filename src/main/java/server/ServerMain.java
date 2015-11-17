@@ -18,7 +18,7 @@ public class ServerMain {
         //get port number form server admin
         String port = JOptionPane.showInputDialog("Welcome to ChitChat! Please Enter port number : ");
 
-        int portNumber = CastAndvalidatePortNumber(port);
+        int portNumber = castAndValidatePortNumber(port);
 
 //        ChitChatTCP chitChatServer = new ChitChatTCP(portNumber);
 //        Thread serverThread = new Thread(chitChatServer);
@@ -26,7 +26,7 @@ public class ServerMain {
 //        serverThread.join();
     }
 
-    private static int  CastAndvalidatePortNumber(String port) {
+    private static int castAndValidatePortNumber(String port) {
 
         int portNumber = 0;
         try {

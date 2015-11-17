@@ -14,7 +14,7 @@ public class ChitChatTCP implements Runnable {
 
     private int port;
     private ServerSocket chitChatServer;
-    private List connectingClientList = new ArrayList();
+    private List<Socket> connectingClientList = new ArrayList();
 
 
     public ChitChatTCP(int port) {
@@ -39,7 +39,7 @@ public class ChitChatTCP implements Runnable {
             try {
                 Socket clientSocket = chitChatServer.accept();
                 connectingClientList.add(clientSocket);
-                
+
 
             } catch (IOException e) {
                 e.printStackTrace();
