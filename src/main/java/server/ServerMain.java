@@ -1,5 +1,6 @@
 package server;
 
+import server.tcp.ChitChatTCP;
 
 import javax.swing.*;
 
@@ -19,26 +20,28 @@ public class ServerMain {
         //get port number form server admin
         String port = JOptionPane.showInputDialog("Welcome to ChitChat! Please Enter port number : ");
 
-        int portNumber = CastAndvalidatePortNumber(port);
+        //cast String to int port and validate it
+        int portNumber = castAndValidatePortNumber(port);
 
-//        ChitChatTCP chitChatServer = new ChitChatTCP(portNumber);
-//        Thread serverThread = new Thread(chitChatServer);
-//        serverThread.start();
-//        serverThread.join();
+        //move the program to Server thread
+        Thread serverThread = new Thread(new ChitChatTCP(portNumber));
+        serverThread.start();
+        //wait while program is running
+        serverThread.join();
     }
 
-    private static int  CastAndvalidatePortNumber(String port) {
+    private static int castAndValidatePortNumber(String port) {
 
         int portNumber = 0;
         try {
-             portNumber = Integer.valueOf(port);
+            portNumber = Integer.valueOf(port);
             //check if the port is valid for network protocol
-            if( portNumber <= 1024 && portNumber > 65535  ){
+            if (portNumber <= 1024 && portNumber > 65535) {
                 System.out.println("Port number is incorrect, port should be between 49151 and 65535");
                 System.exit(-1);
             }
-        } catch (NumberFormatException e){
-            System.out.println(e.getMessage()+" Please enter port number in the right format");
+        } catch (NumberFormatException e) {
+            System.out.println(e.getMessage() + " Please enter port number in the right format");
             System.exit(-1);
         }
 
