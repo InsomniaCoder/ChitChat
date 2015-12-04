@@ -6,6 +6,9 @@
 
 package chitchat.view.server;
 
+import javax.swing.JOptionPane;
+import chitchat.view.server.ServerPanel;
+
 /**
  *
  * @author GiftzyEiei
@@ -29,17 +32,17 @@ public class ServerInitiation extends javax.swing.JFrame {
     private void initComponents() {
 
         jLabel1 = new javax.swing.JLabel();
-        jTextField1 = new javax.swing.JTextField();
-        jButton1 = new javax.swing.JButton();
+        portTextField = new javax.swing.JTextField();
+        startButton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
         jLabel1.setText("Port :");
 
-        jButton1.setText("Start Server");
-        jButton1.addMouseListener(new java.awt.event.MouseAdapter() {
+        startButton.setText("Start Server");
+        startButton.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                jButton1MouseClicked(evt);
+                startButtonMouseClicked(evt);
             }
         });
 
@@ -51,13 +54,13 @@ public class ServerInitiation extends javax.swing.JFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
                         .addGap(107, 107, 107)
-                        .addComponent(jButton1))
+                        .addComponent(startButton))
                     .addGroup(layout.createSequentialGroup()
                         .addGap(75, 75, 75)
                         .addComponent(jLabel1)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(121, Short.MAX_VALUE))
+                        .addComponent(portTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(121, 121, 121))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -65,21 +68,22 @@ public class ServerInitiation extends javax.swing.JFrame {
                 .addGap(61, 61, 61)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel1)
-                    .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(portTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(37, 37, 37)
-                .addComponent(jButton1)
-                .addContainerGap(43, Short.MAX_VALUE))
+                .addComponent(startButton)
+                .addGap(43, 43, 43))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-
-    private void jButton1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton1MouseClicked
-        ServerPanel clientListFrame = new ServerPanel();
-        clientListFrame.setVisible(true);
+    private void startButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_startButtonMouseClicked
+        int port = getPortNumber(portTextField.getText());
+        validatePortNumber(port);
+        ServerPanel serverPanel = new ServerPanel();
+        serverPanel.setVisible(true);
         this.setVisible(false);
-    }//GEN-LAST:event_jButton1MouseClicked
+    }//GEN-LAST:event_startButtonMouseClicked
 
     /**
      * @param args the command line arguments
@@ -115,10 +119,33 @@ public class ServerInitiation extends javax.swing.JFrame {
             }
         });
     }
+    
+    private static int getPortNumber(String portString) {
+
+        int portNumber;
+        try {
+            portNumber = Integer.valueOf(portString);
+        } catch (NumberFormatException e) {
+            JOptionPane dialog = new JOptionPane("Please enter port number in the right format.",JOptionPane.WARNING_MESSAGE);
+            dialog.setVisible(true);
+            return -1;
+        }
+        return portNumber;
+    }
+    
+    private static boolean validatePortNumber(int portNumber) {
+        //check if the port is valid for network protocol
+        if (portNumber <= 1024 || portNumber > 65535) {
+            JOptionPane dialog = new JOptionPane("Port number is incorrect, port should be between 49151 and 65535.");
+            dialog.setVisible(true);
+            return false;
+        }
+        return true;
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
-    private javax.swing.JTextField jTextField1;
+    private javax.swing.JTextField portTextField;
+    private javax.swing.JButton startButton;
     // End of variables declaration//GEN-END:variables
 }
