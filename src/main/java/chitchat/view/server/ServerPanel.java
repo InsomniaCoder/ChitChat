@@ -4,7 +4,7 @@
  * and open the template in the editor.
  */
 
-package server.view;
+package chitchat.view.server;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 /**
