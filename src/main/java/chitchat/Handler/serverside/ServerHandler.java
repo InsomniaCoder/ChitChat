@@ -48,18 +48,18 @@ public class ServerHandler {
      */
     public void checkMembersConnection() throws IOException {
 
-        ObjectOutputStream outToServer;
-        ObjectInputStream inFromServer;
+        ObjectOutputStream outToClient;
+        ObjectInputStream inFromClient;
 
         for (Socket socket : membersList) {
 
             try {
-                outToServer = new ObjectOutputStream(socket.getOutputStream());
+                outToClient = new ObjectOutputStream(socket.getOutputStream());
                 ChitChatMessage pollingMessage = new ChitChatMessage(MessageType.RUOK);
-                outToServer.writeObject(pollingMessage);
-                outToServer.flush();
-                inFromServer = new ObjectInputStream(socket.getInputStream());
-                ChitChatMessage pollingResponse = (ChitChatMessage)inFromServer.readObject();
+                outToClient.writeObject(pollingMessage);
+                outToClient.flush();
+                inFromClient = new ObjectInputStream(socket.getInputStream());
+                ChitChatMessage pollingResponse = (ChitChatMessage)inFromClient.readObject();
                 //check if client answers with I'm OK type
                 if(!MessageType.IMOK.equals(pollingResponse.getMessageType())){
                    removeMembersFromList(socket);
@@ -74,12 +74,12 @@ public class ServerHandler {
 
     public void notifyListToAllMembers() throws IOException {
 
-        ObjectOutputStream outToServer;
+        ObjectOutputStream outToClient;
         for (Socket socket : membersList) {
-            outToServer = new ObjectOutputStream(socket.getOutputStream());
+            outToClient = new ObjectOutputStream(socket.getOutputStream());
             ChitChatMessage chitChatMessage = new ChitChatMessage(MessageType.NOTIFY,membersList);
-            outToServer.writeObject(chitChatMessage);
-            outToServer.flush();
+            outToClient.writeObject(chitChatMessage);
+            outToClient.flush();
         }
     }
 
