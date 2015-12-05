@@ -2,7 +2,7 @@ package chitchat.Handler.serverside;
 
 import chitchat.message.ChitChatMessage;
 import chitchat.message.MessageType;
-
+import chitchat.view.server.ServerPanel;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -16,6 +16,8 @@ import java.util.Map;
 public class ServerHandler {
 
     private static ServerHandler ourInstance = new ServerHandler();
+    private static ServerPanel serverPanel = null;
+
 
     private ServerHandler() {
     }
@@ -26,6 +28,14 @@ public class ServerHandler {
 
 
     private Map<String, Socket> membersMap = new HashMap<String, Socket>();
+
+    public static void setServerPanel(ServerPanel serverPanel) {
+        ServerHandler.serverPanel = serverPanel;
+    }
+    
+    public Map<String, Socket> getMembersMap() {
+        return membersMap;
+    }
 
     /**
      * register member to the Map and notify
@@ -63,6 +73,7 @@ public class ServerHandler {
             outToClient.writeObject(chitChatMessage);
             outToClient.flush();
         }
+        serverPanel.displayClientList();
     }
 
     /**

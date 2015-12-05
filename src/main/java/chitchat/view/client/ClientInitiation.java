@@ -33,10 +33,11 @@ public class ClientInitiation extends javax.swing.JFrame {
         jLabel5 = new javax.swing.JLabel();
         ipTextField = new javax.swing.JTextField();
         portTextField = new javax.swing.JTextField();
-        nameTextField = new javax.swing.JTextField();
+        userNameTextField = new javax.swing.JTextField();
         connectButton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setResizable(false);
 
         jLabel1.setText("Server IP : ");
 
@@ -44,13 +45,12 @@ public class ClientInitiation extends javax.swing.JFrame {
 
         jLabel5.setText("User Name : ");
 
-        ipTextField.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                ipTextFieldActionPerformed(evt);
+        connectButton.setText("Connect");
+        connectButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                connectButtonMouseClicked(evt);
             }
         });
-
-        connectButton.setText("Connect");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -67,7 +67,7 @@ public class ClientInitiation extends javax.swing.JFrame {
                     .addComponent(connectButton)
                     .addComponent(portTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 69, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(ipTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 113, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(nameTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 96, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(userNameTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 96, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(91, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
@@ -84,7 +84,7 @@ public class ClientInitiation extends javax.swing.JFrame {
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel5)
-                    .addComponent(nameTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(userNameTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(29, 29, 29)
                 .addComponent(connectButton)
                 .addContainerGap(40, Short.MAX_VALUE))
@@ -93,9 +93,15 @@ public class ClientInitiation extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void ipTextFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ipTextFieldActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_ipTextFieldActionPerformed
+    private void connectButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_connectButtonMouseClicked
+        // TODO validate info
+        String ip = ipTextField.getText();
+        String port = portTextField.getText();
+        String userName = userNameTextField.getText();
+        ClientPanel clientPanel = new ClientPanel(ip, port, userName);
+        clientPanel.setVisible(true);
+        this.dispose();
+    }//GEN-LAST:event_connectButtonMouseClicked
 
     /**
      * @param args the command line arguments
@@ -138,7 +144,7 @@ public class ClientInitiation extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel5;
-    private javax.swing.JTextField nameTextField;
     private javax.swing.JTextField portTextField;
+    private javax.swing.JTextField userNameTextField;
     // End of variables declaration//GEN-END:variables
 }
