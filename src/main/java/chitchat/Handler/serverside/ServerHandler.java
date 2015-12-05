@@ -27,19 +27,59 @@ public class ServerHandler {
 
     private Map<String, Socket> membersMap = new HashMap<String, Socket>();
 
-
     /**
      * register member to the Map and notify
      *
      * @param clientName
      * @param clientSocket
      */
-    public void addMembersWithNameToMap(String clientName, Socket clientSocket) throws IOException {
-
+    public void registerMember(String clientName, Socket clientSocket) throws IOException {
         membersMap.put(clientName, clientSocket);
         notifyListToAllMembers();
     }
 
+    /**
+     * remove member from Map and Notify
+     * @param memberToBeDeleted
+     * @throws IOException
+     */
+    public void removeMember(String memberToBeDeleted) throws IOException {
+        membersMap.remove(memberToBeDeleted);
+        notifyListToAllMembers();
+        announce("member name : " + memberToBeDeleted + " has left the Chat!!");
+    }
+
+    /**
+     * send the updated map to all members
+     * @throws IOException
+     */
+    public void notifyListToAllMembers() throws IOException {
+
+        ObjectOutputStream outToClient;
+        for (Map.Entry<String, Socket> member : membersMap.entrySet()) {
+            Socket eachClient = member.getValue();
+            outToClient = new ObjectOutputStream(eachClient.getOutputStream());
+            ChitChatMessage chitChatMessage = new ChitChatMessage(MessageType.NOTIFY, membersMap);
+            outToClient.writeObject(chitChatMessage);
+            outToClient.flush();
+        }
+    }
+
+    /**
+     * Announce message to all members
+     * @param message
+     */
+    public void announce(String message) throws IOException {
+
+        ObjectOutputStream outToClient;
+        for (Map.Entry<String, Socket> member : membersMap.entrySet()) {
+            Socket eachClient = member.getValue();
+            outToClient = new ObjectOutputStream(eachClient.getOutputStream());
+            ChitChatMessage chitChatMessage = new ChitChatMessage(MessageType.ANNOUNCE, message);
+            outToClient.writeObject(chitChatMessage);
+            outToClient.flush();
+        }
+    }
 
     /**
      * If attempt to read/write to Client throws IOException
@@ -65,32 +105,13 @@ public class ServerHandler {
                 ChitChatMessage pollingResponse = (ChitChatMessage) inFromClient.readObject();
                 //check if client answers with I'm OK type
                 if (!MessageType.IMOK.equals(pollingResponse.getMessageType())) {
-                    removeMembersFromList(member.getKey());
+                    removeMember(member.getKey());
                 }
             } catch (IOException e) {
-                removeMembersFromList(member.getKey());
+                removeMember(member.getKey());
             } catch (ClassNotFoundException e) {
                 e.printStackTrace();
             }
         }
     }
-
-    public void removeMembersFromList(String memberToBeDeleted) throws IOException {
-        membersMap.remove(memberToBeDeleted);
-        notifyListToAllMembers();
-    }
-
-    public void notifyListToAllMembers() throws IOException {
-
-        ObjectOutputStream outToClient;
-
-        for (Map.Entry<String, Socket> member : membersMap.entrySet()) {
-            Socket eachClient = member.getValue();
-            outToClient = new ObjectOutputStream(eachClient.getOutputStream());
-            ChitChatMessage chitChatMessage = new ChitChatMessage(MessageType.NOTIFY, membersMap);
-            outToClient.writeObject(chitChatMessage);
-            outToClient.flush();
-        }
-    }
-
 }
