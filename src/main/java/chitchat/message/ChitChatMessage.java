@@ -1,7 +1,7 @@
 package chitchat.message;
 
+import java.net.InetAddress;
 import java.net.Socket;
-import java.net.SocketAddress;
 import java.util.Map;
 
 /**
@@ -12,17 +12,13 @@ public class ChitChatMessage {
     MessageType messageType;
     Map<String, Socket> membersList;
     String message;
-    SocketAddress socketAddress;
-
+    String name;
+    InetAddress requestAddress;
+    int requestPort;
 
     public ChitChatMessage(MessageType messageType, String message) {
         this.messageType = messageType;
         this.message = message;
-    }
-
-    public ChitChatMessage(MessageType messageType, SocketAddress socketAddress) {
-        this.messageType = messageType;
-        this.socketAddress = socketAddress;
     }
 
     public ChitChatMessage(MessageType notify, Map<String, Socket> membersList) {
@@ -30,8 +26,25 @@ public class ChitChatMessage {
         this.membersList = membersList;
     }
 
+
     public ChitChatMessage(MessageType messageType) {
         this.messageType = messageType;
+    }
+
+    public InetAddress getRequestAddress() {
+        return requestAddress;
+    }
+
+    public void setRequestAddress(InetAddress requestAddress) {
+        this.requestAddress = requestAddress;
+    }
+
+    public int getRequestPort() {
+        return requestPort;
+    }
+
+    public void setRequestPort(int requestPort) {
+        this.requestPort = requestPort;
     }
 
     public MessageType getMessageType() {
@@ -58,11 +71,11 @@ public class ChitChatMessage {
         this.message = message;
     }
 
-    public SocketAddress getSocketAddress() {
-        return socketAddress;
+    public String getName() {
+        return name;
     }
 
-    public void setSocketAddress(SocketAddress socketAddress) {
-        this.socketAddress = socketAddress;
+    public void setName(String name) {
+        this.name = name;
     }
 }
