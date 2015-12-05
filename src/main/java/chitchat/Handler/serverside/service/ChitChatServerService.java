@@ -49,11 +49,12 @@ public class ChitChatServerService implements Runnable {
     /**
      * 1. get the client name
      */
-    private void initialProtocolAction() throws IOException {
+    private void initialProtocolAction() throws IOException, ClassNotFoundException {
+        ChitChatMessage registerMessage = (ChitChatMessage)inFromClient.readObject();
+        ServerHandler.getInstance().registerMember(registerMessage.getName(), socket);
+        ServerHandler.getInstance().notifyListToAllMembers();
+        ServerHandler.getInstance().announce("member name : "+clientName+" has joined the Chat!!");
 
-        DataInputStream dataInputStream = new DataInputStream(socket.getInputStream());
-        clientName = dataInputStream.readUTF();
-        ServerHandler.getInstance().addMembersWithNameToMap(clientName, socket);
     }
 
     private void determineActionOnMessage(ChitChatMessage messageFromClient) throws IOException {
@@ -62,7 +63,7 @@ public class ChitChatServerService implements Runnable {
 
         switch (messageType) {
             case ANNOUNCE:
-                doAnnounce();
+                doAnnounce(messageFromClient.getMessage());
                 break;
             case QUIT:
                 doQuit();
@@ -72,14 +73,16 @@ public class ChitChatServerService implements Runnable {
 
     /**
      * get message and then announce to the board and all members
+     * @param message
      */
-    private void doAnnounce() {
+    private void doAnnounce(String message) throws IOException {
         //add to message board
         //announce to members
+        ServerHandler.getInstance().announce(message);
     }
 
     private void doQuit() throws IOException {
-        ServerHandler.getInstance().removeMembersFromList(clientName);
+        ServerHandler.getInstance().removeMember(clientName);
     }
 
 

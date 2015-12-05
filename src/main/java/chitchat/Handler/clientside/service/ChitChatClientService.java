@@ -3,12 +3,11 @@ package chitchat.Handler.clientside.service;
 import chitchat.message.ChitChatMessage;
 import chitchat.message.MessageType;
 
-import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.net.InetAddress;
 import java.net.Socket;
-import java.net.SocketAddress;
 import java.util.Map;
 
 /**
@@ -32,7 +31,7 @@ public class ChitChatClientService implements Runnable {
     public void run() {
         try {
             initialProtocolAction();
-            while(true){
+            while (true) {
                 //block til message come
                 ChitChatMessage messageFromServer = (ChitChatMessage) inFromServer.readObject();
                 determineActionOnMessage(messageFromServer);
@@ -48,10 +47,11 @@ public class ChitChatClientService implements Runnable {
      * 1.send this name to server
      */
     private void initialProtocolAction() throws IOException {
-        DataOutputStream sendToServer = new DataOutputStream(socket.getOutputStream());
-        String clientName  = "someThingFromTheForm";
-        sendToServer.writeUTF(clientName);
-        sendToServer.flush();
+        String clientName = "someThingFromTheForm";
+        ChitChatMessage register = new ChitChatMessage(MessageType.REGISTER);
+        register.setName(clientName);
+        outToServer.writeObject(register);
+        outToServer.flush();
     }
 
     private void determineActionOnMessage(ChitChatMessage messageFromServer) throws IOException {
@@ -64,7 +64,7 @@ public class ChitChatClientService implements Runnable {
                 doAnnounce(messageFromServer.getMessage());
                 break;
             case PRIVATE:
-                doPrivate(messageFromServer.getSocketAddress());
+                doPrivate(messageFromServer.getRequestAddress(), messageFromServer.getRequestPort());
                 break;
             case NOTIFY:
                 doNotify(messageFromServer.getMembersList());
@@ -74,6 +74,7 @@ public class ChitChatClientService implements Runnable {
                 break;
         }
     }
+
 
     /**
      * return the IMOK messagge to the server
@@ -86,15 +87,17 @@ public class ChitChatClientService implements Runnable {
 
     /**
      * get the updated list and show in the members list
+     *
      * @param membersMap
      */
     private void doNotify(Map<String, Socket> membersMap) {
-
+        //assign map to online list
     }
 
 
     /**
      * get announce from server and show in the board
+     *
      * @param message
      */
     private void doAnnounce(String message) {
@@ -104,9 +107,14 @@ public class ChitChatClientService implements Runnable {
     /**
      * show dialogue box that we get the incoming request for private chat
      * if yes, then start private session
-     * @param requesterAddress Socket Address of requester of private chat
+     * @param requestAddress
+     * @param requestPort
      */
-    private void doPrivate(SocketAddress requesterAddress) {
+    private void doPrivate(InetAddress requestAddress, int requestPort) throws IOException {
+
+        Socket privateSocket = new Socket(requestAddress,requestPort);
+        //Show private form and send socket along
+        //the communication will be using DataInput/OutputStream
 
     }
 
