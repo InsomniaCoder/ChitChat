@@ -5,6 +5,6 @@ package chitchat.message;
  */
 public enum MessageType {
 
-    ANNOUNCE, PRIVATE, NOTIFY, QUIT
+    ANNOUNCE, RUOK, IMOK, NOTIFY, QUIT, PRIVATE
 
 }
