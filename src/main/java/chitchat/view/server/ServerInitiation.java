@@ -5,9 +5,7 @@
  */
 package chitchat.view.server;
 
-import javax.swing.JOptionPane;
-import chitchat.view.server.ServerPanel;
-
+import javax.swing.*;
 import java.io.IOException;
 
 /**
