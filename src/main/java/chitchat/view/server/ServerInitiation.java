@@ -8,6 +8,8 @@ package chitchat.view.server;
 import javax.swing.JOptionPane;
 import chitchat.view.server.ServerPanel;
 
+import java.io.IOException;
+
 /**
  *
  * @author GiftzyEiei
@@ -41,7 +43,11 @@ public class ServerInitiation extends javax.swing.JFrame {
         startButton.setText("Start Server");
         startButton.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                startButtonMouseClicked(evt);
+                try {
+                    startButtonMouseClicked(evt);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
         });
 
@@ -76,7 +82,7 @@ public class ServerInitiation extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void startButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_startButtonMouseClicked
+    private void startButtonMouseClicked(java.awt.event.MouseEvent evt) throws IOException {//GEN-FIRST:event_startButtonMouseClicked
         String portText = portTextField.getText();
         int port = getPortNumber(portText);
         if (port == -1) {
