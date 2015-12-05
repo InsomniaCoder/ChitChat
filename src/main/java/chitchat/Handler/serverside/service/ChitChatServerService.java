@@ -4,6 +4,7 @@ import chitchat.Handler.serverside.ServerHandler;
 import chitchat.message.ChitChatMessage;
 import chitchat.message.MessageType;
 
+import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -15,6 +16,7 @@ import java.net.Socket;
 public class ChitChatServerService implements Runnable {
 
     Socket socket;
+    String clientName;
     ObjectOutputStream outToClient;
     ObjectInputStream inFromClient;
 
@@ -24,13 +26,15 @@ public class ChitChatServerService implements Runnable {
         inFromClient = new ObjectInputStream(socket.getInputStream());
     }
 
+    /**
+     * start protocol and then waiting for request/response
+     */
     @Override
     public void run() {
 
-        initialProtocolAction();
-
         try {
-            while(true){
+            initialProtocolAction();
+            while (true) {
                 //block til message come
                 ChitChatMessage messageFromClient = (ChitChatMessage) inFromClient.readObject();
                 determineActionOnMessage(messageFromClient);
@@ -42,8 +46,14 @@ public class ChitChatServerService implements Runnable {
         }
     }
 
-    private void initialProtocolAction() {
+    /**
+     * 1. get the client name
+     */
+    private void initialProtocolAction() throws IOException {
 
+        DataInputStream dataInputStream = new DataInputStream(socket.getInputStream());
+        clientName = dataInputStream.readUTF();
+        ServerHandler.getInstance().addMembersWithNameToMap(clientName, socket);
     }
 
     private void determineActionOnMessage(ChitChatMessage messageFromClient) throws IOException {
@@ -69,7 +79,7 @@ public class ChitChatServerService implements Runnable {
     }
 
     private void doQuit() throws IOException {
-        ServerHandler.getInstance().removeMembersFromList(socket);
+        ServerHandler.getInstance().removeMembersFromList(clientName);
     }
 
 
