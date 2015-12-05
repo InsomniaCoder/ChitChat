@@ -6,7 +6,7 @@
 
 package chitchat.view.server;
 
-import chitchat.Handler.serverside.service.ChitChatClientService;
+import chitchat.Handler.serverside.service.ChitChatServerService;
 import chitchat.Handler.serverside.ServerHandler;
 import chitchat.Handler.serverside.ServerUpdater;
 
@@ -56,7 +56,7 @@ public class ServerPanel extends JFrame {
             //add client to list
             ServerHandler.getInstance().addMembers(clientSocket);
             //start service each client
-            new Thread(new ChitChatClientService(clientSocket)).start();
+            new Thread(new ChitChatServerService(clientSocket)).start();
         }
     }
 
