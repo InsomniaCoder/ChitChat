@@ -3,7 +3,6 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package chitchat.view.server;
 
 import javax.swing.JOptionPane;
@@ -78,9 +77,26 @@ public class ServerInitiation extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void startButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_startButtonMouseClicked
-        int port = getPortNumber(portTextField.getText());
-        validatePortNumber(port);
-        ServerPanel serverPanel = new ServerPanel();
+        String portText = portTextField.getText();
+        int port = getPortNumber(portText);
+        if (port == -1) {
+            JOptionPane.showMessageDialog(this,
+                    "Please enter port number in the right format.",
+                    "Message",
+                    JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        boolean correct = validatePortNumber(port);
+        if (!correct) {
+            JOptionPane.showMessageDialog(this,
+                    "Port number is incorrect, port should be between 49151 and 65535.",
+                    "Message",
+                    JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        ServerPanel serverPanel = new ServerPanel(this, portText);
         serverPanel.setVisible(true);
         this.setVisible(false);
     }//GEN-LAST:event_startButtonMouseClicked
@@ -119,25 +135,21 @@ public class ServerInitiation extends javax.swing.JFrame {
             }
         });
     }
-    
+
     private static int getPortNumber(String portString) {
 
         int portNumber;
         try {
             portNumber = Integer.valueOf(portString);
         } catch (NumberFormatException e) {
-            JOptionPane dialog = new JOptionPane("Please enter port number in the right format.",JOptionPane.WARNING_MESSAGE);
-            dialog.setVisible(true);
             return -1;
         }
         return portNumber;
     }
-    
+
     private static boolean validatePortNumber(int portNumber) {
         //check if the port is valid for network protocol
         if (portNumber <= 1024 || portNumber > 65535) {
-            JOptionPane dialog = new JOptionPane("Port number is incorrect, port should be between 49151 and 65535.");
-            dialog.setVisible(true);
             return false;
         }
         return true;
