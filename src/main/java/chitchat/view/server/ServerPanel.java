@@ -5,16 +5,17 @@
  */
 
 package chitchat.view.server;
-import chitchat.Handler.serverside.ChitChatClientService;
+
+import chitchat.Handler.serverside.service.ChitChatClientService;
 import chitchat.Handler.serverside.ServerHandler;
 import chitchat.Handler.serverside.ServerUpdater;
 
+import javax.swing.*;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.JFrame;
 /**
  *
  * @author GiftzyEiei
@@ -46,16 +47,15 @@ public class ServerPanel extends JFrame {
 
         ServerSocket server = new ServerSocket(Integer.valueOf(port));
 
-        //start checker
+        //start checker thread
         new Thread(new ServerUpdater()).start();
-
 
         while(true){
             //waiting for client to connect
             java.net.Socket clientSocket = server.accept();
             //add client to list
             ServerHandler.getInstance().addMembers(clientSocket);
-            //start service
+            //start service each client
             new Thread(new ChitChatClientService(clientSocket)).start();
         }
     }
