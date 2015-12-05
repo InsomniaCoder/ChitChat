@@ -1,4 +1,4 @@
-package chitchat.Handler;
+package chitchat.Handler.serverside;
 
 import java.net.Socket;
 

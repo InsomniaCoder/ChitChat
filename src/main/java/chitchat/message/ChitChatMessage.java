@@ -1,6 +1,6 @@
 package chitchat.message;
 
-import chitchat.Handler.ChitChatClient;
+import chitchat.Handler.serverside.ChitChatClient;
 
 import java.net.SocketAddress;
 import java.util.List;

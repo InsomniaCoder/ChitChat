@@ -1,4 +1,4 @@
-package chitchat.Handler;
+package chitchat.Handler.serverside;
 
 /**
  * Created by PorPaul on 5/12/2558.
