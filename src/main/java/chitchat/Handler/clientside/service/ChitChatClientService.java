@@ -1,15 +1,15 @@
 package chitchat.Handler.clientside.service;
 
-import chitchat.Handler.serverside.ServerHandler;
 import chitchat.message.ChitChatMessage;
 import chitchat.message.MessageType;
 
+import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.net.SocketAddress;
-import java.util.List;
+import java.util.Map;
 
 /**
  * Created by PorPaul on 5/12/2558.
@@ -30,10 +30,8 @@ public class ChitChatClientService implements Runnable {
 
     @Override
     public void run() {
-
-        initialProtocolAction();
-
         try {
+            initialProtocolAction();
             while(true){
                 //block til message come
                 ChitChatMessage messageFromServer = (ChitChatMessage) inFromServer.readObject();
@@ -46,8 +44,14 @@ public class ChitChatClientService implements Runnable {
         }
     }
 
-    private void initialProtocolAction() {
-        
+    /**
+     * 1.send this name to server
+     */
+    private void initialProtocolAction() throws IOException {
+        DataOutputStream sendToServer = new DataOutputStream(socket.getOutputStream());
+        String clientName  = "someThingFromTheForm";
+        sendToServer.writeUTF(clientName);
+        sendToServer.flush();
     }
 
     private void determineActionOnMessage(ChitChatMessage messageFromServer) throws IOException {
@@ -82,9 +86,9 @@ public class ChitChatClientService implements Runnable {
 
     /**
      * get the updated list and show in the members list
-     * @param membersList
+     * @param membersMap
      */
-    private void doNotify(List<Socket> membersList) {
+    private void doNotify(Map<String, Socket> membersMap) {
 
     }
 
