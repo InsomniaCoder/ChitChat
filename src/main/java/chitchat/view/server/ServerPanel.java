@@ -5,8 +5,13 @@
  */
 
 package chitchat.view.server;
+import chitchat.Handler.serverside.ChitChatClientService;
+import chitchat.Handler.serverside.ServerHandler;
+import chitchat.Handler.serverside.ServerUpdater;
+
+import java.io.IOException;
 import java.net.InetAddress;
-import java.net.UnknownHostException;
+import java.net.ServerSocket;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JFrame;
@@ -15,7 +20,10 @@ import javax.swing.JFrame;
  * @author GiftzyEiei
  */
 public class ServerPanel extends JFrame {
-    
+
+    //backend variables
+    static String port;
+    static InetAddress localHost;
     JFrame serverInitiationFrame = null;
 
     /**
@@ -23,13 +31,33 @@ public class ServerPanel extends JFrame {
      */
     public ServerPanel() {
         initComponents();
-//        displayServerInfo();
     }
     
-    public ServerPanel(JFrame serverInitiationFrame, String port){
+    public ServerPanel(JFrame serverInitiationFrame, String portNum) throws IOException {
+        port = portNum;
+        localHost = InetAddress.getLocalHost();
         initComponents();
         this.serverInitiationFrame = serverInitiationFrame;
-        displayServerInfo(port);
+        displayServerInfo();
+        startServerService();
+    }
+
+    private void startServerService() throws IOException {
+
+        ServerSocket server = new ServerSocket(Integer.valueOf(port));
+
+        //start checker
+        new Thread(new ServerUpdater()).start();
+
+
+        while(true){
+            //waiting for client to connect
+            java.net.Socket clientSocket = server.accept();
+            //add client to list
+            ServerHandler.getInstance().addMembers(clientSocket);
+            //start service
+            new Thread(new ChitChatClientService(clientSocket)).start();
+        }
     }
 
     /**
@@ -238,7 +266,7 @@ public class ServerPanel extends JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void DisconnectButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_DisconnectButtonMouseClicked
-        // TODO add code for terminatint server
+        // TODO add code for terminate server
         this.setVisible(false);
         serverInitiationFrame.setVisible(true);
     }//GEN-LAST:event_DisconnectButtonMouseClicked
@@ -279,19 +307,14 @@ public class ServerPanel extends JFrame {
         
     }
 
-    private static void displayServerInfo(String port){
+    private static void displayServerInfo(){
         //display IP and port
-        String ip = "";
-        try {
-            ip = InetAddress.getLocalHost().getHostAddress();
-        } catch (UnknownHostException ex) {
-            Logger.getLogger(ServerPanel.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        ipLabel.setText(ip);
+        ipLabel.setText(localHost.getHostAddress());
         portLabel.setText(port);
-        
     }
-    
+
+
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton DisconnectButton;
     private javax.swing.JList clientListView;
