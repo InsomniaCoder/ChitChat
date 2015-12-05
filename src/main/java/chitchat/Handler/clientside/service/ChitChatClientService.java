@@ -60,7 +60,6 @@ public class ChitChatClientService implements Runnable {
 
         switch (messageType) {
             case ANNOUNCE:
-                //Announce this message
                 doAnnounce(messageFromServer.getMessage());
                 break;
             case PRIVATE:

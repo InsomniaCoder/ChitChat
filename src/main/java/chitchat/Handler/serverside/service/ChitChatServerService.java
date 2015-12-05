@@ -4,7 +4,6 @@ import chitchat.Handler.serverside.ServerHandler;
 import chitchat.message.ChitChatMessage;
 import chitchat.message.MessageType;
 
-import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;

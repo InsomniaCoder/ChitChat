@@ -50,6 +50,7 @@ public class ServerHandler {
 
     /**
      * remove member from Map and Notify
+     *
      * @param memberToBeDeleted
      * @throws IOException
      */
@@ -61,6 +62,7 @@ public class ServerHandler {
 
     /**
      * send the updated map to all members
+     *
      * @throws IOException
      */
     public void notifyListToAllMembers() throws IOException {
@@ -78,6 +80,7 @@ public class ServerHandler {
 
     /**
      * Announce message to all members
+     *
      * @param message
      */
     public void announce(String message) throws IOException {
