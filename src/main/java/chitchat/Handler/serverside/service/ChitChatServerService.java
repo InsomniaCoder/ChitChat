@@ -32,7 +32,6 @@ public class ChitChatServerService implements Runnable {
     public void run() {
 
         try {
-            initialProtocolAction();
             while (true) {
                 //block til message come
                 ChitChatMessage messageFromClient = (ChitChatMessage) inFromClient.readObject();
@@ -45,39 +44,56 @@ public class ChitChatServerService implements Runnable {
         }
     }
 
-    /**
-     * 1. get the client name
-     */
-    private void initialProtocolAction() throws IOException, ClassNotFoundException {
-        ChitChatMessage registerMessage = (ChitChatMessage)inFromClient.readObject();
-        ServerHandler.getInstance().registerMember(registerMessage.getName(), socket);
-        ServerHandler.getInstance().notifyListToAllMembers();
-        ServerHandler.getInstance().announce("member name : "+clientName+" has joined the Chat!!");
-
-    }
-
-    private void determineActionOnMessage(ChitChatMessage messageFromClient) throws IOException {
+    private void determineActionOnMessage(ChitChatMessage messageFromClient) throws IOException, ClassNotFoundException {
 
         MessageType messageType = messageFromClient.getMessageType();
 
         switch (messageType) {
+            case REGISTER:
+                doRegister(messageFromClient.getName());
+                break;
             case ANNOUNCE:
                 doAnnounce(messageFromClient.getMessage());
+                break;
+            case PRIVATE:
+                doPrivate(messageFromClient.getName(),messageFromClient.getMessage());
                 break;
             case QUIT:
                 doQuit();
                 break;
+
         }
+    }
+
+
+    /**
+     * get the client name and register
+     * @param name
+     */
+    private void doRegister(String name) throws IOException, ClassNotFoundException {
+        this.clientName = name;
+        ServerHandler.getInstance().registerMember(name, socket);
     }
 
     /**
      * get message and then announce to the board and all members
+     *
      * @param message
      */
     private void doAnnounce(String message) throws IOException {
         //add to message board
         //announce to members
-        ServerHandler.getInstance().announce(message);
+        ServerHandler.getInstance().announce(clientName,message);
+    }
+
+    /**
+     *
+     * @param destinationClient the receiver of private
+     * @param message
+     */
+    private void doPrivate(String destinationClient, String message) throws IOException {
+
+        ServerHandler.getInstance().sendPrivateMessage(clientName,destinationClient,message);
     }
 
     private void doQuit() throws IOException {

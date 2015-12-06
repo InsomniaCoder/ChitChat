@@ -276,7 +276,7 @@ public class ServerPanel extends JFrame {
         String message = msgInputTextField.getText();
         try {
             // broadcast message to all clients
-            ServerHandler.getInstance().announce(message);
+            ServerHandler.getInstance().announce(clientName, message);
             
         } catch (IOException ex) {
             Logger.getLogger(ServerPanel.class.getName()).log(Level.SEVERE, null, ex);
@@ -289,7 +289,7 @@ public class ServerPanel extends JFrame {
         String message = msgInputTextField.getText();
         try {
             // broadcast message to all clients
-            ServerHandler.getInstance().announce(message);
+            ServerHandler.getInstance().announce(clientName, message);
             
         } catch (IOException ex) {
             Logger.getLogger(ServerPanel.class.getName()).log(Level.SEVERE, null, ex);

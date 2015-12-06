@@ -3,11 +3,14 @@ package chitchat.Handler.serverside;
 import chitchat.message.ChitChatMessage;
 import chitchat.message.MessageType;
 import chitchat.view.server.ServerPanel;
+
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -29,12 +32,22 @@ public class ServerHandler {
 
     private Map<String, Socket> membersMap = new HashMap<String, Socket>();
 
+    private List<String> membersList = new ArrayList<String>();
+
     public static void setServerPanel(ServerPanel serverPanel) {
         ServerHandler.serverPanel = serverPanel;
     }
-    
+
     public Map<String, Socket> getMembersMap() {
         return membersMap;
+    }
+
+    public List<String> getMembersList() {
+        return membersList;
+    }
+
+    public void setMembersList(List<String> membersList) {
+        this.membersList = membersList;
     }
 
     /**
@@ -45,7 +58,10 @@ public class ServerHandler {
      */
     public void registerMember(String clientName, Socket clientSocket) throws IOException {
         membersMap.put(clientName, clientSocket);
+        membersList.add(clientName);
         notifyListToAllMembers();
+        ServerHandler.getInstance().announce(clientName, "member name : " + clientName + " has joined the Chat!!");
+        System.out.println("member joined");
     }
 
     /**
@@ -56,8 +72,10 @@ public class ServerHandler {
      */
     public void removeMember(String memberToBeDeleted) throws IOException {
         membersMap.remove(memberToBeDeleted);
+        membersList.remove(memberToBeDeleted);
         notifyListToAllMembers();
-        announce("member name : " + memberToBeDeleted + " has left the Chat!!");
+        announce(memberToBeDeleted, "member name : " + memberToBeDeleted + " has left the Chat!!");
+        System.out.println("member left");
     }
 
     /**
@@ -71,7 +89,7 @@ public class ServerHandler {
         for (Map.Entry<String, Socket> member : membersMap.entrySet()) {
             Socket eachClient = member.getValue();
             outToClient = new ObjectOutputStream(eachClient.getOutputStream());
-            ChitChatMessage chitChatMessage = new ChitChatMessage(MessageType.NOTIFY, membersMap);
+            ChitChatMessage chitChatMessage = new ChitChatMessage(MessageType.NOTIFY, membersList);
             outToClient.writeObject(chitChatMessage);
             outToClient.flush();
         }
@@ -81,19 +99,36 @@ public class ServerHandler {
     /**
      * Announce message to all members
      *
+     * @param clientName
      * @param message
      */
-    public void announce(String message) throws IOException {
+    public void announce(String clientName, String message) throws IOException {
 
         ObjectOutputStream outToClient;
         for (Map.Entry<String, Socket> member : membersMap.entrySet()) {
             Socket eachClient = member.getValue();
             outToClient = new ObjectOutputStream(eachClient.getOutputStream());
-            ChitChatMessage chitChatMessage = new ChitChatMessage(MessageType.ANNOUNCE, message);
+
+            ChitChatMessage chitChatMessage = new ChitChatMessage(MessageType.ANNOUNCE);
+            chitChatMessage.setName(clientName);
+            chitChatMessage.setMessage(message);
+
             outToClient.writeObject(chitChatMessage);
             outToClient.flush();
+            System.out.println("announced");
         }
     }
+
+    public void sendPrivateMessage(String sendingClient, String destinationClient, String message) throws IOException {
+
+            ObjectOutputStream outToClient;
+            Socket eachClient = membersMap.get(destinationClient);
+            outToClient = new ObjectOutputStream(eachClient.getOutputStream());
+            ChitChatMessage chitChatMessage = new ChitChatMessage(MessageType.PRIVATE, sendingClient, message);
+            outToClient.writeObject(chitChatMessage);
+            outToClient.flush();
+            System.out.println("private sent");
+        }
 
     /**
      * If attempt to read/write to Client throws IOException
@@ -127,5 +162,6 @@ public class ServerHandler {
                 e.printStackTrace();
             }
         }
+        System.out.println("connection checked!!");
     }
 }
