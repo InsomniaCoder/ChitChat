@@ -72,6 +72,7 @@ public class ServerHandler {
      */
     public void removeMember(String memberToBeDeleted) throws IOException {
         membersMap.remove(memberToBeDeleted);
+        membersList.remove(memberToBeDeleted);
         notifyListToAllMembers();
         announce("member name : " + memberToBeDeleted + " has left the Chat!!");
         System.out.println("member left");
@@ -112,6 +113,17 @@ public class ServerHandler {
             System.out.println("announced");
         }
     }
+
+    public void sendPrivateMessage(String destinationClient, String message) throws IOException {
+
+            ObjectOutputStream outToClient;
+            Socket eachClient = membersMap.get(destinationClient);
+            outToClient = new ObjectOutputStream(eachClient.getOutputStream());
+            ChitChatMessage chitChatMessage = new ChitChatMessage(MessageType.PRIVATE, destinationClient, message);
+            outToClient.writeObject(chitChatMessage);
+            outToClient.flush();
+            System.out.println("private sent");
+        }
 
     /**
      * If attempt to read/write to Client throws IOException

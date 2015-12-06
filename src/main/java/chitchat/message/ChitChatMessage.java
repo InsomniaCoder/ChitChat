@@ -26,6 +26,12 @@ public class ChitChatMessage {
         this.messageType = messageType;
     }
 
+    public ChitChatMessage(MessageType messageType, String destinationClient, String message) {
+        this.messageType = messageType;
+        this.name = destinationClient;
+        this.message = message;
+    }
+
     public MessageType getMessageType() {
         return messageType;
     }

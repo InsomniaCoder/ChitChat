@@ -49,15 +49,19 @@ public class ChitChatServerService implements Runnable {
         MessageType messageType = messageFromClient.getMessageType();
 
         switch (messageType) {
+            case REGISTER:
+                doRegister();
+                break;
             case ANNOUNCE:
                 doAnnounce(messageFromClient.getMessage());
+                break;
+            case PRIVATE:
+                doPrivate(messageFromClient.getName(),messageFromClient.getMessage());
                 break;
             case QUIT:
                 doQuit();
                 break;
-            case REGISTER:
-                doRegister();
-                break;
+
         }
     }
 
@@ -79,6 +83,15 @@ public class ChitChatServerService implements Runnable {
         //add to message board
         //announce to members
         ServerHandler.getInstance().announce(message);
+    }
+
+    /**
+     *
+     * @param destinationClient the receiver of private
+     * @param message
+     */
+    private void doPrivate(String destinationClient, String message) throws IOException {
+        ServerHandler.getInstance().sendPrivateMessage(destinationClient,message);
     }
 
     private void doQuit() throws IOException {
