@@ -6,16 +6,13 @@
 
 package chitchat.view.client;
 
-import chitchat.Handler.clientside.service.ChitChatClientService;
+import chitchat.Handler.clientside.service.StartClientService;
 import chitchat.Handler.serverside.ServerHandler;
 import java.io.IOException;
-import java.net.ConnectException;
 import java.net.Socket;
-import java.net.SocketException;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.JOptionPane;
 
 /**
  * @author GiftzyEiei
@@ -24,7 +21,7 @@ public class ClientPanel extends javax.swing.JFrame {
     private static String ip;
     private static String port;
     private String userName;
-    private ClientInitiation clientInitiationFrame;
+    private ClientInitiation clientInitiation;
     private static Socket socket;
 
     /**
@@ -34,44 +31,14 @@ public class ClientPanel extends javax.swing.JFrame {
         initComponents();
     }
     
-    public ClientPanel(String ip, String port, String userName, ClientInitiation clientInitiationFrame){
+    public ClientPanel(String ip, String port, String userName, ClientInitiation clientInitiation){
         initComponents();
         this.ip = ip;
         this.port = port;
         this.userName = userName;
-        this.clientInitiationFrame = clientInitiationFrame;
-        displayInfo();
-        displayClientList();
-        try {
-            startService();
-        } catch (IOException ex) {
-            Logger.getLogger(ClientPanel.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
-
-    private void startService() throws IOException {
-        //initial connection with Server
-        try{
-            socket = new Socket(ip,Integer.parseInt(port));
-        }
-        catch(ConnectException ex){
-            JOptionPane.showMessageDialog(this,
-                    "Cannot connect to server.",
-                    "Message",
-                    JOptionPane.INFORMATION_MESSAGE);
-            this.dispose();
-            return;
-        }
-        catch(SocketException ex){
-            JOptionPane.showMessageDialog(this,
-                    "Cannot connect to server.",
-                    "Message",
-                    JOptionPane.INFORMATION_MESSAGE);
-            this.dispose();
-            return;
-        }
-        this.setVisible(true);
-        clientInitiationFrame.setVisible(false);
+        this.clientInitiation = clientInitiation;
+        Thread startClient = new Thread(new StartClientService(ip, Integer.valueOf(port), clientInitiation, this));
+        startClient.start();
     }
 
     /**
@@ -101,6 +68,11 @@ public class ClientPanel extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("ChitChat for Client");
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowClosed(java.awt.event.WindowEvent evt) {
+                formWindowClosed(evt);
+            }
+        });
 
         jLabel1.setText("Server Info");
 
@@ -243,7 +215,21 @@ public class ClientPanel extends javax.swing.JFrame {
     private void DisconnectButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_DisconnectButtonMouseClicked
         // display the Initiation window then close this Panel window, server will be terminate along with the panel.
         this.dispose();
+        try {
+            socket.close();
+        } catch (IOException ex) {
+            Logger.getLogger(ClientPanel.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }//GEN-LAST:event_DisconnectButtonMouseClicked
+
+    private void formWindowClosed(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosed
+        try {
+            // close socket when close window
+            socket.close();
+        } catch (IOException ex) {
+            Logger.getLogger(ClientPanel.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_formWindowClosed
 
     /**
      * @param args the command line arguments
@@ -278,16 +264,9 @@ public class ClientPanel extends javax.swing.JFrame {
                 new ClientPanel().setVisible(true);
             }
         });
-        
-        try {
-            //start service
-            new Thread(new ChitChatClientService(socket)).start();
-        } catch (IOException ex) {
-            Logger.getLogger(ClientPanel.class.getName()).log(Level.SEVERE, null, ex);
-        }
     }
 
-    private void displayInfo() {
+    public void displayInfo() {
         ipLabel.setText(ip);
         portLabel.setText(port);
         userNameLabel.setText(userName);

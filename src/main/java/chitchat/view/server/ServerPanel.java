@@ -7,8 +7,7 @@
 package chitchat.view.server;
 
 import chitchat.Handler.serverside.ServerHandler;
-import chitchat.Handler.serverside.ServerUpdater;
-import chitchat.Handler.serverside.service.ChitChatServerService;
+import chitchat.Handler.serverside.service.StartServerService;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.ServerSocket;
@@ -27,7 +26,7 @@ public class ServerPanel extends JFrame {
     //backend variables
     static String port;
     static InetAddress localHost;
-    ServerInitiation serverInitiationFrame;
+    ServerInitiation serverInitiation;
     private static ServerSocket server;
 
     /**
@@ -37,37 +36,14 @@ public class ServerPanel extends JFrame {
         initComponents();
     }
 
-    public ServerPanel(ServerInitiation serverInitiationFrame, String portNum) throws IOException {
+    public ServerPanel(ServerInitiation serverInitiation, String portNum) throws IOException {
         initComponents();
         port = portNum;
         localHost = InetAddress.getLocalHost();
-        this.serverInitiationFrame = serverInitiationFrame;
+        this.serverInitiation = serverInitiation;
         ServerHandler.setServerPanel(this);
-        startServerService();
-    }
-
-    private void startServerService(){
-
-        try{
-            server = new ServerSocket(Integer.valueOf(port));
-        }
-        catch(IOException ex){
-            JOptionPane.showMessageDialog(this,
-                    "Cannot start server.",
-                    "Message",
-                    JOptionPane.INFORMATION_MESSAGE);
-            this.dispose();
-            return;
-        }
-
-        this.setVisible(true);
-        serverInitiationFrame.setVisible(false);
-        
-        displayServerInfo();
-        displayClientList();
-        
-        //start checker thread
-        new Thread(new ServerUpdater()).start();
+        Thread startServer = new Thread(new StartServerService(Integer.valueOf(port), serverInitiation, this));
+        startServer.start();
     }
 
     /**
@@ -101,6 +77,11 @@ public class ServerPanel extends JFrame {
         msgInputTextField = new javax.swing.JTextField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowClosed(java.awt.event.WindowEvent evt) {
+                formWindowClosed(evt);
+            }
+        });
 
         jLabel1.setText("Server Info");
 
@@ -282,7 +263,7 @@ public class ServerPanel extends JFrame {
 
     private void DisconnectButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_DisconnectButtonMouseClicked
         // display the Initiation window then close this Panel window, server will be terminate along with the panel.
-        serverInitiationFrame.setVisible(true);
+        serverInitiation.setVisible(true);
         this.dispose();
         try {
             server.close();
@@ -317,6 +298,15 @@ public class ServerPanel extends JFrame {
         msgInputTextField.setText("");
     }//GEN-LAST:event_msgInputTextFieldActionPerformed
 
+    private void formWindowClosed(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosed
+        try {
+            //terminate server when close window
+            server.close();
+        } catch (IOException ex) {
+            Logger.getLogger(ServerPanel.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_formWindowClosed
+
     /**
      * @param args the command line arguments
      */
@@ -350,20 +340,9 @@ public class ServerPanel extends JFrame {
                 new ServerPanel().setVisible(true);
             }
         });
-        
-        while (true) {
-            //waiting for client to connect
-            try {
-                java.net.Socket clientSocket = server.accept();
-                //start service each client
-                new Thread(new ChitChatServerService(clientSocket)).start();
-            } catch (IOException ex) {
-                Logger.getLogger(ServerPanel.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        }
     }
 
-    private void displayServerInfo() {
+    public void displayServerInfo() {
         //display IP and port
         ipLabel.setText(localHost.getHostAddress());
         portLabel.setText(port);
