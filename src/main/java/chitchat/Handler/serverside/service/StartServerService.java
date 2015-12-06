@@ -20,7 +20,7 @@ import javax.swing.JOptionPane;
  * @author GiftzyEiei
  */
 public class StartServerService implements Runnable {
-    private ServerSocket server;
+    private ServerSocket serverSocket;
     private int port;
     private ServerInitiation serverInitiation;
     private ServerPanel serverPanel;
@@ -33,7 +33,7 @@ public class StartServerService implements Runnable {
     
     public void run() {
         try{
-            server = new ServerSocket(port);
+            serverSocket = new ServerSocket(port);
         }
         catch(IOException ex){
             JOptionPane.showMessageDialog(serverPanel,
@@ -56,9 +56,10 @@ public class StartServerService implements Runnable {
         while (true) {
             //waiting for client to connect
             try {
-                java.net.Socket clientSocket = server.accept();
+                java.net.Socket clientSocket = serverSocket.accept();
                 //start service each client
                 new Thread(new ChitChatServerService(clientSocket)).start();
+                serverPanel.setSocket(serverSocket);
             } catch (IOException ex) {
                 Logger.getLogger(ServerPanel.class.getName()).log(Level.SEVERE, null, ex);
             }

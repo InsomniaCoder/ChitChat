@@ -11,9 +11,7 @@ import chitchat.Handler.serverside.service.StartServerService;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.ServerSocket;
-import java.net.Socket;
 import java.util.List;
-import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -28,7 +26,11 @@ public class ServerPanel extends JFrame {
     static String port;
     static InetAddress localHost;
     ServerInitiation serverInitiation;
-    private static ServerSocket server;
+    private ServerSocket serverSocket; //will be used for closing socket when press Disconnect button or close the window
+
+    public void setSocket(ServerSocket socket) {
+        this.serverSocket = socket;
+    }
 
     /**
      * Creates new form ServerPanel
@@ -147,6 +149,7 @@ public class ServerPanel extends JFrame {
             public int getSize() { return strings.length; }
             public Object getElementAt(int i) { return strings[i]; }
         });
+        clientListView.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_INTERVAL_SELECTION);
         clientListView.setSelectionBackground(new java.awt.Color(204, 204, 255));
         clientListView.setSelectionForeground(new java.awt.Color(51, 51, 51));
         jScrollPane2.setViewportView(clientListView);
@@ -266,18 +269,18 @@ public class ServerPanel extends JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void DisconnectButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_DisconnectButtonMouseClicked
-        // display the Initiation window then close this Panel window, server will be terminate along with the panel.
+        // display the Initiation window then close this Panel window, serverSocket will be terminate along with the panel.
         serverInitiation.setVisible(true);
         this.dispose();
         try {
-            ServerPanel.server.close();
+            serverSocket.close();
         } catch (IOException ex) {
             Logger.getLogger(ServerPanel.class.getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_DisconnectButtonMouseClicked
 
     private void sendButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_sendButtonMouseClicked
-        String message = msgInputTextField.getText();
+        String message = "Server : " + msgInputTextField.getText() + "\n";
         //TODO broadcast
 //        try {
 //            // broadcast message to all clients
@@ -286,12 +289,12 @@ public class ServerPanel extends JFrame {
 //        } catch (IOException ex) {
 //            Logger.getLogger(ServerPanel.class.getName()).log(Level.SEVERE, null, ex);
 //        }
-        logTextArea.append("Server : "+message+"\n");
+        logTextArea.append(message);
         msgInputTextField.setText("");
     }//GEN-LAST:event_sendButtonMouseClicked
 
     private void msgInputTextFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_msgInputTextFieldActionPerformed
-        String message = msgInputTextField.getText();
+        String message = "Server : " + msgInputTextField.getText() + "\n";
         //TODO broadcast
 //        try {
 //            // broadcast message to all clients
@@ -300,19 +303,27 @@ public class ServerPanel extends JFrame {
 //        } catch (IOException ex) {
 //            Logger.getLogger(ServerPanel.class.getName()).log(Level.SEVERE, null, ex);
 //        }
-        logTextArea.append("Server : "+message+"\n");
+        logTextArea.append(message);
         msgInputTextField.setText("");
     }//GEN-LAST:event_msgInputTextFieldActionPerformed
 
     private void formWindowClosed(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosed
         try {
-            //terminate server when close window
-            server.close();
+            //terminate serverSocket when close window
+            serverSocket.close();
         } catch (IOException ex) {
             Logger.getLogger(ServerPanel.class.getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_formWindowClosed
 
+    /**
+     * Display new chat message or log under the last line.
+     * @param message chat message to be displayed
+     */
+    public void displayNewChatMessageOrLog(String message){
+        logTextArea.append(message);
+    }
+    
     /**
      * @param args the command line arguments
      */

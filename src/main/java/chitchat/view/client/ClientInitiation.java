@@ -99,8 +99,7 @@ public class ClientInitiation extends javax.swing.JFrame {
         String ip = ipTextField.getText();
         String port = portTextField.getText();
         String userName = userNameTextField.getText();
-        ClientPanel clientPanel = new ClientPanel(ip, port, userName);
-        this.dispose();
+        ClientPanel clientPanel = new ClientPanel(ip, port, userName, this);
     }//GEN-LAST:event_connectButtonMouseClicked
 
     /**

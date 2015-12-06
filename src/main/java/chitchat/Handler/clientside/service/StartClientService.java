@@ -7,6 +7,7 @@ package chitchat.Handler.clientside.service;
  */
 
 
+import chitchat.view.client.ClientInitiation;
 import chitchat.view.client.ClientPanel;
 import java.io.IOException;
 import java.net.ConnectException;
@@ -25,11 +26,13 @@ public class StartClientService implements Runnable {
     private String ip;
     private int port;
     private ClientPanel clientPanel;
+    private ClientInitiation clientInitiation;
 
-    public StartClientService(String ip, int port, ClientPanel clientPanel) {
+    public StartClientService(String ip, int port, ClientInitiation clientInitiation, ClientPanel clientPanel) {
         this.ip = ip;
         this.port = port;
         this.clientPanel = clientPanel;
+        this.clientInitiation = clientInitiation;
     }
 
     public void run() {
@@ -66,6 +69,7 @@ public class StartClientService implements Runnable {
         
         clientPanel.displayInfo();
         clientPanel.setVisible(true);
+        clientInitiation.dispose();
         
         try {
             //start service
@@ -75,5 +79,6 @@ public class StartClientService implements Runnable {
         }
         
         clientPanel.displayClientList();
+        clientPanel.setSocket(socket);
     }
 }

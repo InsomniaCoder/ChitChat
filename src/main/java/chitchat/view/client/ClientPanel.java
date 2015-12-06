@@ -21,7 +21,11 @@ public class ClientPanel extends javax.swing.JFrame {
     private static String ip;
     private static String port;
     private String userName;
-    private static Socket socket;
+    private Socket socket; //will be used for closing socket when press Disconnect button or close the window
+
+    public void setSocket(Socket socket) {
+        this.socket = socket;
+    }
 
     /**
      * Creates new form ClientPanel
@@ -30,12 +34,12 @@ public class ClientPanel extends javax.swing.JFrame {
         initComponents();
     }
     
-    public ClientPanel(String ip, String port, String userName){
+    public ClientPanel(String ip, String port, String userName, ClientInitiation initiation){
         initComponents();
         this.ip = ip;
         this.port = port;
         this.userName = userName;
-        Thread startClient = new Thread(new StartClientService(ip, Integer.valueOf(port), this));
+        Thread startClient = new Thread(new StartClientService(ip, Integer.valueOf(port), initiation, this));
         startClient.start();
     }
 
@@ -151,6 +155,11 @@ public class ClientPanel extends javax.swing.JFrame {
         });
         clientListView.setSelectionBackground(new java.awt.Color(204, 204, 255));
         clientListView.setSelectionForeground(new java.awt.Color(51, 51, 51));
+        clientListView.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                clientListViewMouseClicked(evt);
+            }
+        });
         jScrollPane3.setViewportView(clientListView);
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
@@ -294,20 +303,49 @@ public class ClientPanel extends javax.swing.JFrame {
 
     private void sendButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_sendButtonMouseClicked
         // click send button to send message to chat room
-        String message = msgInputTextField.getText();
+        String message = userName + " : " + msgInputTextField.getText() + "\n";
         // TODO send message to server
-        msgDisplayTextArea.append(userName + " : " + message + "\n");
+        msgDisplayTextArea.append(message);
         msgInputTextField.setText("");
     }//GEN-LAST:event_sendButtonMouseClicked
 
     private void msgInputTextFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_msgInputTextFieldActionPerformed
         // press Enter to send message to chat room
-        String message = msgInputTextField.getText();
+        String message = userName + " : " + msgInputTextField.getText() + "\n";
         // TODO send message to server
-        msgDisplayTextArea.append(userName + " : " + message + "\n");
+        msgDisplayTextArea.append(message);
         msgInputTextField.setText("");
     }//GEN-LAST:event_msgInputTextFieldActionPerformed
 
+    private void clientListViewMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_clientListViewMouseClicked
+        // double click a client in client list to start private chat
+        if (evt.getClickCount() == 2 && clientListView.getSelectedValue() != null) {
+            String selectedClientName = clientListView.getSelectedValue().toString();
+            //TODO make private chat work
+            //TODO Assign to a thread (if needed)
+            //TODO fix problem when close private chat window then the panel is closed too
+            PrivateChatWindow chatWindow = new PrivateChatWindow(userName, selectedClientName);
+            chatWindow.setVisible(true);
+        }
+        
+//        // mock data for test
+//        if (evt.getClickCount() == 2) {
+//            String selectedClientName = "Por"; 
+//            //TODO make private chat work
+//            //TODO  Assign to a thread
+//            PrivateChatWindow chatWindow = new PrivateChatWindow(userName, selectedClientName);
+//            chatWindow.setVisible(true);
+//        }
+    }//GEN-LAST:event_clientListViewMouseClicked
+
+    /**
+     * Display new chat message under the last message.
+     * @param message chat message to be displayed
+     */
+    public void displayNewChatMessage(String message){
+        msgDisplayTextArea.append(message);
+    }
+    
     /**
      * @param args the command line arguments
      */
@@ -350,12 +388,14 @@ public class ClientPanel extends javax.swing.JFrame {
     }
     
     public void displayClientList(){
-        List<String> membersList = ServerHandler.getInstance().getMembersList();
-        int numMember = membersList.size();
-        String[] clientList = new String[numMember];
-        membersList.toArray(clientList);
-        clientListView.setListData(clientList);
-        numOnlineLabel.setText(String.valueOf(numMember));
+        //TODO uncomment
+//        List<String> membersList = ServerHandler.getInstance().getMembersList();
+//        int numMember = membersList.size();
+//        String[] clientList = new String[numMember];
+//        membersList.toArray(clientList);
+//        clientListView.setListData(clientList);
+//        numOnlineLabel.setText(String.valueOf(numMember));
+        numOnlineLabel.setText(String.valueOf(clientListView.getVisibleRowCount()));
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
