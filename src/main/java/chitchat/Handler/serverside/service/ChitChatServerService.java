@@ -50,9 +50,11 @@ public class ChitChatServerService implements Runnable {
      */
     private void initialProtocolAction() throws IOException, ClassNotFoundException {
         ChitChatMessage registerMessage = (ChitChatMessage)inFromClient.readObject();
-        ServerHandler.getInstance().registerMember(registerMessage.getName(), socket);
-        ServerHandler.getInstance().notifyListToAllMembers();
-        ServerHandler.getInstance().announce("member name : "+clientName+" has joined the Chat!!");
+        if(registerMessage.getMessageType().equals(MessageType.REGISTER)) {
+            ServerHandler.getInstance().registerMember(registerMessage.getName(), socket);
+            ServerHandler.getInstance().notifyListToAllMembers();
+            ServerHandler.getInstance().announce("member name : " + clientName + " has joined the Chat!!");
+        }
 
     }
 
