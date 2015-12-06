@@ -27,7 +27,8 @@ public class ServerPanel extends JFrame {
     //backend variables
     static String port;
     static InetAddress localHost;
-    JFrame serverInitiationFrame = null;
+    ServerInitiation serverInitiationFrame;
+    private static ServerSocket server;
 
     /**
      * Creates new form ServerPanel
@@ -36,29 +37,37 @@ public class ServerPanel extends JFrame {
         initComponents();
     }
 
-    public ServerPanel(JFrame serverInitiationFrame, String portNum) throws IOException {
+    public ServerPanel(ServerInitiation serverInitiationFrame, String portNum) throws IOException {
+        initComponents();
         port = portNum;
         localHost = InetAddress.getLocalHost();
-        initComponents();
         this.serverInitiationFrame = serverInitiationFrame;
-        displayServerInfo();
-        displayClientList();
         ServerHandler.setServerPanel(this);
+        startServerService();
     }
 
-    private static void startServerService() throws IOException {
+    private void startServerService(){
 
-        ServerSocket server = new ServerSocket(Integer.valueOf(port));
+        try{
+            server = new ServerSocket(Integer.valueOf(port));
+        }
+        catch(IOException ex){
+            JOptionPane.showMessageDialog(this,
+                    "Cannot start server.",
+                    "Message",
+                    JOptionPane.INFORMATION_MESSAGE);
+            this.dispose();
+            return;
+        }
 
+        this.setVisible(true);
+        serverInitiationFrame.setVisible(false);
+        
+        displayServerInfo();
+        displayClientList();
+        
         //start checker thread
         new Thread(new ServerUpdater()).start();
-
-        while (true) {
-            //waiting for client to connect
-            java.net.Socket clientSocket = server.accept();
-            //start service each client
-            new Thread(new ChitChatServerService(clientSocket)).start();
-        }
     }
 
     /**
@@ -275,6 +284,11 @@ public class ServerPanel extends JFrame {
         // display the Initiation window then close this Panel window, server will be terminate along with the panel.
         serverInitiationFrame.setVisible(true);
         this.dispose();
+        try {
+            server.close();
+        } catch (IOException ex) {
+            Logger.getLogger(ServerPanel.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }//GEN-LAST:event_DisconnectButtonMouseClicked
 
     private void sendButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_sendButtonMouseClicked
@@ -336,11 +350,16 @@ public class ServerPanel extends JFrame {
                 new ServerPanel().setVisible(true);
             }
         });
-
-        try {
-            startServerService();
-        } catch (IOException ex) {
-            Logger.getLogger(ServerPanel.class.getName()).log(Level.SEVERE, null, ex);
+        
+        while (true) {
+            //waiting for client to connect
+            try {
+                java.net.Socket clientSocket = server.accept();
+                //start service each client
+                new Thread(new ChitChatServerService(clientSocket)).start();
+            } catch (IOException ex) {
+                Logger.getLogger(ServerPanel.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
     }
 
@@ -359,6 +378,7 @@ public class ServerPanel extends JFrame {
             i++;
         }
         clientListView.setListData(clientList);
+        numOnlineLabel.setText(String.valueOf(membersMap.size()));
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

@@ -33,10 +33,10 @@
               </Group>
               <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Component id="connectButton" min="-2" max="-2" attributes="0"/>
                   <Component id="portTextField" min="-2" pref="69" max="-2" attributes="0"/>
                   <Component id="ipTextField" min="-2" pref="113" max="-2" attributes="0"/>
                   <Component id="userNameTextField" min="-2" pref="96" max="-2" attributes="0"/>
+                  <Component id="connectButton" alignment="0" min="-2" max="-2" attributes="0"/>
               </Group>
               <EmptySpace pref="91" max="32767" attributes="0"/>
           </Group>
@@ -62,7 +62,7 @@
               </Group>
               <EmptySpace min="-2" pref="29" max="-2" attributes="0"/>
               <Component id="connectButton" min="-2" max="-2" attributes="0"/>
-              <EmptySpace pref="40" max="32767" attributes="0"/>
+              <EmptySpace pref="36" max="32767" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>

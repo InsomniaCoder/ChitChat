@@ -101,8 +101,6 @@ public class ServerInitiation extends javax.swing.JFrame {
         }
 
         ServerPanel serverPanel = new ServerPanel(this, portText);
-        serverPanel.setVisible(true);
-        this.setVisible(false);
     }//GEN-LAST:event_startButtonMouseClicked
 
     /**

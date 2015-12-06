@@ -8,12 +8,14 @@ package chitchat.view.client;
 
 import chitchat.Handler.clientside.service.ChitChatClientService;
 import chitchat.Handler.serverside.ServerHandler;
-
 import java.io.IOException;
+import java.net.ConnectException;
 import java.net.Socket;
+import java.net.SocketException;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JOptionPane;
 
 /**
  * @author GiftzyEiei
@@ -22,6 +24,8 @@ public class ClientPanel extends javax.swing.JFrame {
     private static String ip;
     private static String port;
     private String userName;
+    private ClientInitiation clientInitiationFrame;
+    private static Socket socket;
 
     /**
      * Creates new form ClientPanel
@@ -30,20 +34,44 @@ public class ClientPanel extends javax.swing.JFrame {
         initComponents();
     }
     
-    public ClientPanel(String ip, String port, String userName){
+    public ClientPanel(String ip, String port, String userName, ClientInitiation clientInitiationFrame){
         initComponents();
         this.ip = ip;
         this.port = port;
         this.userName = userName;
+        this.clientInitiationFrame = clientInitiationFrame;
         displayInfo();
         displayClientList();
+        try {
+            startService();
+        } catch (IOException ex) {
+            Logger.getLogger(ClientPanel.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
-    private static void startService() throws IOException {
+    private void startService() throws IOException {
         //initial connection with Server
-        Socket socket = new Socket(ip,Integer.parseInt(port));
-        //start service
-        new Thread(new ChitChatClientService(socket)).start();
+        try{
+            socket = new Socket(ip,Integer.parseInt(port));
+        }
+        catch(ConnectException ex){
+            JOptionPane.showMessageDialog(this,
+                    "Cannot connect to server.",
+                    "Message",
+                    JOptionPane.INFORMATION_MESSAGE);
+            this.dispose();
+            return;
+        }
+        catch(SocketException ex){
+            JOptionPane.showMessageDialog(this,
+                    "Cannot connect to server.",
+                    "Message",
+                    JOptionPane.INFORMATION_MESSAGE);
+            this.dispose();
+            return;
+        }
+        this.setVisible(true);
+        clientInitiationFrame.setVisible(false);
     }
 
     /**
@@ -87,8 +115,6 @@ public class ClientPanel extends javax.swing.JFrame {
         DisconnectButton.setText("Disconnect");
         DisconnectButton.setFocusPainted(false);
         DisconnectButton.setFocusable(false);
-        DisconnectButton.setMaximumSize(new java.awt.Dimension(84, 27));
-        DisconnectButton.setMinimumSize(new java.awt.Dimension(84, 27));
         DisconnectButton.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 DisconnectButtonMouseClicked(evt);
@@ -102,20 +128,18 @@ public class ClientPanel extends javax.swing.JFrame {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGap(0, 0, 0)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel1)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel1)
-                            .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addComponent(jLabel2)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(ipLabel)))
-                        .addContainerGap())
+                        .addComponent(jLabel2)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(ipLabel))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(jLabel4)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(portLabel)
-                        .addGap(94, 94, 94)
-                        .addComponent(DisconnectButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 84, Short.MAX_VALUE)
+                        .addComponent(DisconnectButton)))
+                .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -127,11 +151,13 @@ public class ClientPanel extends javax.swing.JFrame {
                     .addComponent(jLabel2)
                     .addComponent(ipLabel))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(DisconnectButton, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel4)
-                    .addComponent(portLabel))
-                .addContainerGap())
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel4)
+                            .addComponent(portLabel))
+                        .addContainerGap())
+                    .addComponent(DisconnectButton, javax.swing.GroupLayout.Alignment.TRAILING)))
         );
 
         jLabel6.setText("Client List");
@@ -176,7 +202,7 @@ public class ClientPanel extends javax.swing.JFrame {
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 277, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
-        jLabel3.setText("Welcome to ChitChat ");
+        jLabel3.setText("Welcome to ChitChat :");
 
         userNameLabel.setText("jLabel5");
 
@@ -215,6 +241,7 @@ public class ClientPanel extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void DisconnectButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_DisconnectButtonMouseClicked
+        // display the Initiation window then close this Panel window, server will be terminate along with the panel.
         this.dispose();
     }//GEN-LAST:event_DisconnectButtonMouseClicked
 
@@ -253,7 +280,8 @@ public class ClientPanel extends javax.swing.JFrame {
         });
         
         try {
-            startService();
+            //start service
+            new Thread(new ChitChatClientService(socket)).start();
         } catch (IOException ex) {
             Logger.getLogger(ClientPanel.class.getName()).log(Level.SEVERE, null, ex);
         }
