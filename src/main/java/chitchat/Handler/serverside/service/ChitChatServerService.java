@@ -32,7 +32,6 @@ public class ChitChatServerService implements Runnable {
     public void run() {
 
         try {
-            initialProtocolAction();
             while (true) {
                 //block til message come
                 ChitChatMessage messageFromClient = (ChitChatMessage) inFromClient.readObject();
@@ -45,19 +44,7 @@ public class ChitChatServerService implements Runnable {
         }
     }
 
-    /**
-     * 1. get the client name
-     */
-    private void initialProtocolAction() throws IOException, ClassNotFoundException {
-        ChitChatMessage registerMessage = (ChitChatMessage)inFromClient.readObject();
-        if(registerMessage.getMessageType().equals(MessageType.REGISTER)) {
-            ServerHandler.getInstance().registerMember(registerMessage.getName(), socket);
-            ServerHandler.getInstance().notifyListToAllMembers();
-        }
-
-    }
-
-    private void determineActionOnMessage(ChitChatMessage messageFromClient) throws IOException {
+    private void determineActionOnMessage(ChitChatMessage messageFromClient) throws IOException, ClassNotFoundException {
 
         MessageType messageType = messageFromClient.getMessageType();
 
@@ -68,11 +55,24 @@ public class ChitChatServerService implements Runnable {
             case QUIT:
                 doQuit();
                 break;
+            case REGISTER:
+                doRegister();
+                break;
         }
+    }
+
+
+    /**
+     * get the client name and register
+     */
+    private void doRegister() throws IOException, ClassNotFoundException {
+        ChitChatMessage registerMessage = (ChitChatMessage) inFromClient.readObject();
+        ServerHandler.getInstance().registerMember(registerMessage.getName(), socket);
     }
 
     /**
      * get message and then announce to the board and all members
+     *
      * @param message
      */
     private void doAnnounce(String message) throws IOException {

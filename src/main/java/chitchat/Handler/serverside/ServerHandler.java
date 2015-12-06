@@ -3,11 +3,14 @@ package chitchat.Handler.serverside;
 import chitchat.message.ChitChatMessage;
 import chitchat.message.MessageType;
 import chitchat.view.server.ServerPanel;
+
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -29,12 +32,22 @@ public class ServerHandler {
 
     private Map<String, Socket> membersMap = new HashMap<String, Socket>();
 
+    private List<String> membersList = new ArrayList<String>();
+
     public static void setServerPanel(ServerPanel serverPanel) {
         ServerHandler.serverPanel = serverPanel;
     }
-    
+
     public Map<String, Socket> getMembersMap() {
         return membersMap;
+    }
+
+    public List<String> getMembersList() {
+        return membersList;
+    }
+
+    public void setMembersList(List<String> membersList) {
+        this.membersList = membersList;
     }
 
     /**
@@ -45,6 +58,7 @@ public class ServerHandler {
      */
     public void registerMember(String clientName, Socket clientSocket) throws IOException {
         membersMap.put(clientName, clientSocket);
+        membersList.add(clientName);
         notifyListToAllMembers();
         ServerHandler.getInstance().announce("member name : " + clientName + " has joined the Chat!!");
         System.out.println("member joined");
@@ -74,7 +88,7 @@ public class ServerHandler {
         for (Map.Entry<String, Socket> member : membersMap.entrySet()) {
             Socket eachClient = member.getValue();
             outToClient = new ObjectOutputStream(eachClient.getOutputStream());
-            ChitChatMessage chitChatMessage = new ChitChatMessage(MessageType.NOTIFY, membersMap);
+            ChitChatMessage chitChatMessage = new ChitChatMessage(MessageType.NOTIFY, membersList);
             outToClient.writeObject(chitChatMessage);
             outToClient.flush();
         }
