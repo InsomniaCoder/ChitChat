@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -77,6 +78,7 @@ public class ServerPanel extends JFrame {
         msgInputTextField = new javax.swing.JTextField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setTitle("ChitChat for Server");
         addWindowListener(new java.awt.event.WindowAdapter() {
             public void windowClosed(java.awt.event.WindowEvent evt) {
                 formWindowClosed(evt);
@@ -111,7 +113,7 @@ public class ServerPanel extends JFrame {
                                 .addComponent(jLabel4)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(portLabel)
-                                .addGap(78, 78, 78)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                 .addComponent(DisconnectButton))
                             .addGroup(jPanel1Layout.createSequentialGroup()
                                 .addComponent(jLabel2)
@@ -182,8 +184,8 @@ public class ServerPanel extends JFrame {
                         .addComponent(jLabel7)
                         .addComponent(numOnlineLabel)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 373, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 380, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(13, Short.MAX_VALUE))
         );
 
         jLabel3.setText("Log");
@@ -219,20 +221,19 @@ public class ServerPanel extends JFrame {
                     .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                         .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 436, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addComponent(jLabel3)))
-                .addGap(0, 10, Short.MAX_VALUE))
+                .addGap(0, 0, Short.MAX_VALUE))
         );
         jPanel4Layout.setVerticalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel4Layout.createSequentialGroup()
-                .addGap(16, 16, 16)
+                .addGap(2, 2, 2)
                 .addComponent(jLabel3)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 435, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 448, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(sendButton, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(msgInputTextField))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(msgInputTextField)))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -240,11 +241,11 @@ public class ServerPanel extends JFrame {
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(0, 0, 0)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addGap(18, 18, 18)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(19, 19, 19))
         );
@@ -252,10 +253,13 @@ public class ServerPanel extends JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-            .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                .addContainerGap())
         );
 
         pack();
@@ -266,7 +270,7 @@ public class ServerPanel extends JFrame {
         serverInitiation.setVisible(true);
         this.dispose();
         try {
-            server.close();
+            ServerPanel.server.close();
         } catch (IOException ex) {
             Logger.getLogger(ServerPanel.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -274,26 +278,28 @@ public class ServerPanel extends JFrame {
 
     private void sendButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_sendButtonMouseClicked
         String message = msgInputTextField.getText();
-        try {
-            // broadcast message to all clients
-            ServerHandler.getInstance().announce(clientName, message);
-            
-        } catch (IOException ex) {
-            Logger.getLogger(ServerPanel.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        //TODO broadcast
+//        try {
+//            // broadcast message to all clients
+//            ServerHandler.getInstance().announce(clientName, message);
+//            
+//        } catch (IOException ex) {
+//            Logger.getLogger(ServerPanel.class.getName()).log(Level.SEVERE, null, ex);
+//        }
         logTextArea.append("Server : "+message+"\n");
         msgInputTextField.setText("");
     }//GEN-LAST:event_sendButtonMouseClicked
 
     private void msgInputTextFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_msgInputTextFieldActionPerformed
         String message = msgInputTextField.getText();
-        try {
-            // broadcast message to all clients
-            ServerHandler.getInstance().announce(clientName, message);
-            
-        } catch (IOException ex) {
-            Logger.getLogger(ServerPanel.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        //TODO broadcast
+//        try {
+//            // broadcast message to all clients
+//            ServerHandler.getInstance().announce(clientName, message);
+//            
+//        } catch (IOException ex) {
+//            Logger.getLogger(ServerPanel.class.getName()).log(Level.SEVERE, null, ex);
+//        }
         logTextArea.append("Server : "+message+"\n");
         msgInputTextField.setText("");
     }//GEN-LAST:event_msgInputTextFieldActionPerformed
@@ -349,15 +355,12 @@ public class ServerPanel extends JFrame {
     }
 
     public void displayClientList(){
-        Map<String, Socket> membersMap = ServerHandler.getInstance().getMembersMap();
-        String[] clientList = new String[membersMap.size()];
-        for (Map.Entry<String, Socket> member : membersMap.entrySet()) {
-            int i = 0;
-            clientList[i] = member.getKey();
-            i++;
-        }
+        List<String> membersList = ServerHandler.getInstance().getMembersList();
+        int numMember = membersList.size();
+        String[] clientList = new String[numMember];
+        membersList.toArray(clientList);
         clientListView.setListData(clientList);
-        numOnlineLabel.setText(String.valueOf(membersMap.size()));
+        numOnlineLabel.setText(String.valueOf(numMember));
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

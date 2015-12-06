@@ -7,6 +7,8 @@ package chitchat.view.server;
 
 import javax.swing.*;
 import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -35,17 +37,14 @@ public class ServerInitiation extends javax.swing.JFrame {
         startButton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setTitle("ChitChat for Server");
 
         jLabel1.setText("Port :");
 
         startButton.setText("Start Server");
         startButton.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                try {
-                    startButtonMouseClicked(evt);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+                startButtonMouseClicked(evt);
             }
         });
 
@@ -80,7 +79,7 @@ public class ServerInitiation extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void startButtonMouseClicked(java.awt.event.MouseEvent evt) throws IOException {//GEN-FIRST:event_startButtonMouseClicked
+    private void startButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_startButtonMouseClicked
         String portText = portTextField.getText();
         int port = getPortNumber(portText);
         if (port == -1) {
@@ -100,7 +99,11 @@ public class ServerInitiation extends javax.swing.JFrame {
             return;
         }
 
-        ServerPanel serverPanel = new ServerPanel(this, portText);
+        try {
+            ServerPanel serverPanel = new ServerPanel(this, portText);
+        } catch (IOException ex) {
+            Logger.getLogger(ServerInitiation.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }//GEN-LAST:event_startButtonMouseClicked
 
     /**

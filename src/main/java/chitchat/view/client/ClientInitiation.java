@@ -37,6 +37,7 @@ public class ClientInitiation extends javax.swing.JFrame {
         connectButton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setTitle("ChitChat for Client");
         setResizable(false);
 
         jLabel1.setText("Server IP : ");
@@ -98,7 +99,8 @@ public class ClientInitiation extends javax.swing.JFrame {
         String ip = ipTextField.getText();
         String port = portTextField.getText();
         String userName = userNameTextField.getText();
-        ClientPanel clientPanel = new ClientPanel(ip, port, userName, this);
+        ClientPanel clientPanel = new ClientPanel(ip, port, userName);
+        this.dispose();
     }//GEN-LAST:event_connectButtonMouseClicked
 
     /**
