@@ -6,9 +6,8 @@ import chitchat.message.MessageType;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.net.InetAddress;
 import java.net.Socket;
-import java.util.Map;
+import java.util.List;
 
 /**
  * Created by PorPaul on 5/12/2558.
@@ -30,9 +29,9 @@ public class ChitChatClientService implements Runnable {
     @Override
     public void run() {
         try {
-            initialProtocolAction();
+            registerToServer();
             while (true) {
-                //block til message come
+                //block til message come.. wait for server
                 ChitChatMessage messageFromServer = (ChitChatMessage) inFromServer.readObject();
                 determineActionOnMessage(messageFromServer);
             }
@@ -46,7 +45,7 @@ public class ChitChatClientService implements Runnable {
     /**
      * 1.send this name to server
      */
-    private void initialProtocolAction() throws IOException {
+    private void registerToServer() throws IOException {
         String clientName = "someThingFromTheForm";
         ChitChatMessage register = new ChitChatMessage(MessageType.REGISTER);
         register.setName(clientName);
@@ -64,7 +63,8 @@ public class ChitChatClientService implements Runnable {
                 doAnnounce(messageFromServer.getMessage());
                 break;
             case PRIVATE:
-                doPrivate(messageFromServer.getRequestAddress(), messageFromServer.getRequestPort());
+                //todo
+                doPrivate();
                 break;
             case NOTIFY:
                 doNotify(messageFromServer.getMembersList());
@@ -88,9 +88,9 @@ public class ChitChatClientService implements Runnable {
     /**
      * get the updated list and show in the members list
      *
-     * @param membersMap
+     * @param membersList
      */
-    private void doNotify(Map<String, Socket> membersMap) {
+    private void doNotify(List<String> membersList) {
         //assign map to online list
     }
 
@@ -106,15 +106,8 @@ public class ChitChatClientService implements Runnable {
 
     /**
      * show dialogue box that we get the incoming request for private chat
-     * if yes, then start private session
-     * @param requestAddress
-     * @param requestPort
      */
-    private void doPrivate(InetAddress requestAddress, int requestPort) throws IOException {
-
-        Socket privateSocket = new Socket(requestAddress,requestPort);
-        //Show private form and send socket along
-        //the communication will be using DataInput/OutputStream
+    private void doPrivate() throws IOException {
 
     }
 
