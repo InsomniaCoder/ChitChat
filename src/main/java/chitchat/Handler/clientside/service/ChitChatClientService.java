@@ -60,7 +60,7 @@ public class ChitChatClientService implements Runnable {
 
         switch (messageType) {
             case ANNOUNCE:
-                doAnnounce(messageFromServer.getMessage());
+                doAnnounce(messageFromServer.getName(),messageFromServer.getMessage());
                 break;
             case PRIVATE:
                 //todo
@@ -98,9 +98,10 @@ public class ChitChatClientService implements Runnable {
     /**
      * get announce from server and show in the board
      *
+     * @param name sender name
      * @param message
      */
-    private void doAnnounce(String message) {
+    private void doAnnounce(String name, String message) {
         //show this message to the board
     }
 

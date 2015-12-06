@@ -60,7 +60,7 @@ public class ServerHandler {
         membersMap.put(clientName, clientSocket);
         membersList.add(clientName);
         notifyListToAllMembers();
-        ServerHandler.getInstance().announce("member name : " + clientName + " has joined the Chat!!");
+        ServerHandler.getInstance().announce(clientName, "member name : " + clientName + " has joined the Chat!!");
         System.out.println("member joined");
     }
 
@@ -74,7 +74,7 @@ public class ServerHandler {
         membersMap.remove(memberToBeDeleted);
         membersList.remove(memberToBeDeleted);
         notifyListToAllMembers();
-        announce("member name : " + memberToBeDeleted + " has left the Chat!!");
+        announce(memberToBeDeleted, "member name : " + memberToBeDeleted + " has left the Chat!!");
         System.out.println("member left");
     }
 
@@ -99,27 +99,32 @@ public class ServerHandler {
     /**
      * Announce message to all members
      *
+     * @param clientName
      * @param message
      */
-    public void announce(String message) throws IOException {
+    public void announce(String clientName, String message) throws IOException {
 
         ObjectOutputStream outToClient;
         for (Map.Entry<String, Socket> member : membersMap.entrySet()) {
             Socket eachClient = member.getValue();
             outToClient = new ObjectOutputStream(eachClient.getOutputStream());
-            ChitChatMessage chitChatMessage = new ChitChatMessage(MessageType.ANNOUNCE, message);
+
+            ChitChatMessage chitChatMessage = new ChitChatMessage(MessageType.ANNOUNCE);
+            chitChatMessage.setName(clientName);
+            chitChatMessage.setMessage(message);
+
             outToClient.writeObject(chitChatMessage);
             outToClient.flush();
             System.out.println("announced");
         }
     }
 
-    public void sendPrivateMessage(String destinationClient, String message) throws IOException {
+    public void sendPrivateMessage(String sendingClient, String destinationClient, String message) throws IOException {
 
             ObjectOutputStream outToClient;
             Socket eachClient = membersMap.get(destinationClient);
             outToClient = new ObjectOutputStream(eachClient.getOutputStream());
-            ChitChatMessage chitChatMessage = new ChitChatMessage(MessageType.PRIVATE, destinationClient, message);
+            ChitChatMessage chitChatMessage = new ChitChatMessage(MessageType.PRIVATE, sendingClient, message);
             outToClient.writeObject(chitChatMessage);
             outToClient.flush();
             System.out.println("private sent");

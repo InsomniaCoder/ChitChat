@@ -50,7 +50,7 @@ public class ChitChatServerService implements Runnable {
 
         switch (messageType) {
             case REGISTER:
-                doRegister();
+                doRegister(messageFromClient.getName());
                 break;
             case ANNOUNCE:
                 doAnnounce(messageFromClient.getMessage());
@@ -68,10 +68,11 @@ public class ChitChatServerService implements Runnable {
 
     /**
      * get the client name and register
+     * @param name
      */
-    private void doRegister() throws IOException, ClassNotFoundException {
-        ChitChatMessage registerMessage = (ChitChatMessage) inFromClient.readObject();
-        ServerHandler.getInstance().registerMember(registerMessage.getName(), socket);
+    private void doRegister(String name) throws IOException, ClassNotFoundException {
+        this.clientName = name;
+        ServerHandler.getInstance().registerMember(name, socket);
     }
 
     /**
@@ -82,7 +83,7 @@ public class ChitChatServerService implements Runnable {
     private void doAnnounce(String message) throws IOException {
         //add to message board
         //announce to members
-        ServerHandler.getInstance().announce(message);
+        ServerHandler.getInstance().announce(clientName,message);
     }
 
     /**
@@ -91,7 +92,8 @@ public class ChitChatServerService implements Runnable {
      * @param message
      */
     private void doPrivate(String destinationClient, String message) throws IOException {
-        ServerHandler.getInstance().sendPrivateMessage(destinationClient,message);
+
+        ServerHandler.getInstance().sendPrivateMessage(clientName,destinationClient,message);
     }
 
     private void doQuit() throws IOException {
