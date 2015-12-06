@@ -64,7 +64,7 @@ public class ChitChatClientService implements Runnable {
                 break;
             case PRIVATE:
                 //todo
-                doPrivate();
+                doPrivate(messageFromServer.getName(),messageFromServer.getMessage());
                 break;
             case NOTIFY:
                 doNotify(messageFromServer.getMembersList());
@@ -91,7 +91,7 @@ public class ChitChatClientService implements Runnable {
      * @param membersList
      */
     private void doNotify(List<String> membersList) {
-        //assign map to online list
+        //update and assign map to online list
     }
 
 
@@ -101,14 +101,19 @@ public class ChitChatClientService implements Runnable {
      * @param message
      */
     private void doAnnounce(String message) {
-
+        //show this message to the board
     }
 
     /**
      * show dialogue box that we get the incoming request for private chat
+     * @param name
+     * @param message
      */
-    private void doPrivate() throws IOException {
-
+    private void doPrivate(String name, String message) throws IOException {
+        //open windows of this name
+        //have a list contain talking client
+        //if on the list just assign the message to that box
+        //else open the box and then assign message
     }
 
 }
