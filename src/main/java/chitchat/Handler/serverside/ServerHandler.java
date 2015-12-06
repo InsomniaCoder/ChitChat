@@ -46,6 +46,8 @@ public class ServerHandler {
     public void registerMember(String clientName, Socket clientSocket) throws IOException {
         membersMap.put(clientName, clientSocket);
         notifyListToAllMembers();
+        ServerHandler.getInstance().announce("member name : " + clientName + " has joined the Chat!!");
+        System.out.println("member joined");
     }
 
     /**
@@ -58,6 +60,7 @@ public class ServerHandler {
         membersMap.remove(memberToBeDeleted);
         notifyListToAllMembers();
         announce("member name : " + memberToBeDeleted + " has left the Chat!!");
+        System.out.println("member left");
     }
 
     /**
@@ -92,6 +95,7 @@ public class ServerHandler {
             ChitChatMessage chitChatMessage = new ChitChatMessage(MessageType.ANNOUNCE, message);
             outToClient.writeObject(chitChatMessage);
             outToClient.flush();
+            System.out.println("announced");
         }
     }
 
@@ -127,5 +131,6 @@ public class ServerHandler {
                 e.printStackTrace();
             }
         }
+        System.out.println("connection checked!!");
     }
 }
