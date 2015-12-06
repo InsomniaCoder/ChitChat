@@ -2,6 +2,7 @@ package chitchat.message;
 
 import java.net.InetAddress;
 import java.net.Socket;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -11,6 +12,7 @@ public class ChitChatMessage {
 
     MessageType messageType;
     Map<String, Socket> membersList;
+    List<String> members;
     String message;
     String name;
     InetAddress requestAddress;
