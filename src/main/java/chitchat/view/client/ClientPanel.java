@@ -8,10 +8,9 @@ package chitchat.view.client;
 
 import chitchat.Handler.clientside.service.ChitChatClientService;
 import chitchat.Handler.clientside.service.StartClientService;
-import chitchat.Handler.serverside.ServerHandler;
+
 import java.io.IOException;
 import java.net.Socket;
-import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 

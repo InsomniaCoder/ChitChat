@@ -1,5 +1,6 @@
 package chitchat.Handler.clientside.service;
 
+import chitchat.Handler.clientside.ClientHandler;
 import chitchat.message.ChitChatMessage;
 import chitchat.message.MessageType;
 import chitchat.view.client.ClientPanel;
@@ -25,6 +26,10 @@ public class ChitChatClientService implements Runnable {
         outToServer = new ObjectOutputStream(socket.getOutputStream());
         inFromServer = new ObjectInputStream(socket.getInputStream());
         this.clientPanel = clientPanel;
+
+        ClientHandler.getInstance().setInFromServer(inFromServer);
+        ClientHandler.getInstance().setOutToServer(outToServer);
+        ClientHandler.getInstance().setClientPanel(clientPanel);
     }
 
     @Override
@@ -48,19 +53,6 @@ public class ChitChatClientService implements Runnable {
         }
     }
 
-    /**
-     * 1.send this name to server
-     */
-    private void registerToServer() throws IOException {
-        ChitChatMessage register = new ChitChatMessage(MessageType.REGISTER);
-        register.setName(clientPanel.getUserName());
-        synchronized (outToServer) {
-            outToServer.writeObject(register);
-            outToServer.flush();
-        }
-        System.out.println("sent name to server ...");
-    }
-
     private void determineActionOnMessage(ChitChatMessage messageFromServer) throws IOException {
 
         MessageType messageType = messageFromServer.getMessageType();
@@ -71,7 +63,7 @@ public class ChitChatClientService implements Runnable {
                 break;
             case PRIVATE:
                 //todo
-                System.out.println("doprivate");
+                System.out.println("doPrivate");
                 doPrivate(messageFromServer.getName(),messageFromServer.getMessage());
                 break;
             case NOTIFY:
@@ -85,16 +77,15 @@ public class ChitChatClientService implements Runnable {
     }
 
 
+    private void registerToServer() throws IOException {
+        ClientHandler.getInstance().register();
+    }
+
     /**
      * return the IMOK message to the server
      */
     private void doRuok() throws IOException {
-        ChitChatMessage returnMessage = new ChitChatMessage(MessageType.IMOK);
-        synchronized (outToServer) {
-            outToServer.writeObject(returnMessage);
-            outToServer.flush();
-        }
-        System.out.println("reply I'M OK");
+        ClientHandler.getInstance().sendImOk();
     }
 
     /**
@@ -104,6 +95,7 @@ public class ChitChatClientService implements Runnable {
      */
     private void doNotify(List<String> membersList) {
         //update and assign map to online list
+        ClientHandler.getInstance().setMembersList(membersList);
     }
 
 
