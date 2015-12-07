@@ -6,7 +6,6 @@
 
 package chitchat.Handler.serverside.service;
 
-import chitchat.Handler.serverside.ServerUpdater;
 import chitchat.view.server.ServerInitiation;
 import chitchat.view.server.ServerPanel;
 import java.io.IOException;
@@ -49,10 +48,7 @@ public class StartServerService implements Runnable {
         
         serverPanel.displayServerInfo();
         serverPanel.displayClientList();
-        
-        //start checker thread
-        new Thread(new ServerUpdater()).start();
-        
+
         while (true) {
             //waiting for client to connect
             try {
