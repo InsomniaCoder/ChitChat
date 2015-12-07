@@ -37,21 +37,23 @@ public class ChitChatServerService implements Runnable {
 
                 ChitChatMessage messageFromClient = null;
 
-                try {
+
                     synchronized (inFromClient) {
                         //block til message come
                         messageFromClient = (ChitChatMessage) inFromClient.readObject();
                         System.out.println("message from client received with type : " + messageFromClient.getMessageType());
                         determineActionOnMessage(messageFromClient);
                     }
-                }catch (EOFException e){
-                    ServerHandler.getInstance().removeMember(clientName);
-                }
+
             }
-        } catch (IOException e) {
-            e.printStackTrace();
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
+         }catch (IOException e){
+            try {
+                ServerHandler.getInstance().removeMember(clientName);
+            } catch (IOException e1) {
+                e1.printStackTrace();
+            }
         }
     }
 
