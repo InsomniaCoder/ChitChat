@@ -62,7 +62,6 @@ public class ChitChatClientService implements Runnable {
                 doAnnounce(messageFromServer.getName(),messageFromServer.getMessage());
                 break;
             case PRIVATE:
-                //todo
                 System.out.println("doPrivate");
                 doPrivate(messageFromServer.getName(),messageFromServer.getMessage());
                 break;
@@ -75,7 +74,6 @@ public class ChitChatClientService implements Runnable {
                 break;
         }
     }
-
 
     private void registerToServer() throws IOException {
         ClientHandler.getInstance().register();
@@ -96,6 +94,7 @@ public class ChitChatClientService implements Runnable {
     private void doNotify(List<String> membersList) {
         //update and assign map to online list
         ClientHandler.getInstance().setMembersList(membersList);
+        clientPanel.displayClientList();
     }
 
 
