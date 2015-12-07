@@ -70,7 +70,7 @@ public class ClientHandler {
         ChitChatMessage chitChatMessage = new ChitChatMessage(MessageType.ANNOUNCE);
         String userName = clientPanel.getUserName();
         chitChatMessage.setName(userName);
-        chitChatMessage.setMessage(userName +" : "+message+ "\n");
+        chitChatMessage.setMessage(message);
 
         synchronized (outToServer) {
             outToServer.writeObject(chitChatMessage);

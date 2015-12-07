@@ -8,6 +8,7 @@ package chitchat.view.client;
 
 import chitchat.Handler.clientside.ClientHandler;
 import chitchat.Handler.clientside.service.StartClientService;
+import chitchat.Handler.serverside.ServerHandler;
 
 import java.io.IOException;
 import java.net.Socket;
@@ -310,7 +311,7 @@ public class ClientPanel extends javax.swing.JFrame {
 
     private void sendButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_sendButtonMouseClicked
         // click send button to send message to chat room
-        String message = msgInputTextField.getText();
+        String message =  msgInputTextField.getText();
         try {
             ClientHandler.getInstance().announce(message);
         } catch (IOException e) {
@@ -321,7 +322,7 @@ public class ClientPanel extends javax.swing.JFrame {
 
     private void msgInputTextFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_msgInputTextFieldActionPerformed
         // press Enter to send message to chat room
-        String message = msgInputTextField.getText();
+        String message =  msgInputTextField.getText();
         try {
             ClientHandler.getInstance().announce(message);
         } catch (IOException e) {
@@ -394,8 +395,8 @@ public class ClientPanel extends javax.swing.JFrame {
 
     public void displayClientList() {
         List<String> membersList = ClientHandler.membersList;
-        if (null != membersList) {
-            if (membersList.size() != 0) {
+        if(null != membersList) {
+            if(membersList.size() != 0 ) {
                 int numMember = membersList.size();
                 String[] clientList = new String[numMember];
                 membersList.toArray(clientList);
