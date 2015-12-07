@@ -7,7 +7,6 @@ import chitchat.view.server.ServerPanel;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.net.Socket;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -29,9 +28,6 @@ public class ServerHandler {
         return ourInstance;
     }
 
-
-    private Map<String, Socket> membersMap = new HashMap<String, Socket>();
-
     private Map<String, ObjectInputStream> inputMap = new HashMap<String, ObjectInputStream>();
 
     private Map<String, ObjectOutputStream> outputMap = new HashMap<String, ObjectOutputStream>();
@@ -49,16 +45,14 @@ public class ServerHandler {
     /**
      * register member to the Map and notify
      *  @param clientName
-     * @param clientSocket
      * @param clientInputStream
      * @param clientOutputStream
      */
-    public void registerMember(String clientName, Socket clientSocket, ObjectInputStream clientInputStream, ObjectOutputStream clientOutputStream) throws IOException {
-        membersMap.put(clientName, clientSocket);
+    public void registerMember(String clientName,ObjectInputStream clientInputStream, ObjectOutputStream clientOutputStream) throws IOException {
         inputMap.put(clientName, clientInputStream);
         outputMap.put(clientName, clientOutputStream);
         membersList.add(clientName);
-        ServerHandler.getInstance().announce("server",clientName + " has joined the Chat!!");
+        ServerHandler.getInstance().announce("Server",clientName + " has joined the Chat!!");
         notifyListToAllMembers();
     }
 
@@ -69,7 +63,8 @@ public class ServerHandler {
      * @throws IOException
      */
     public void removeMember(String memberToBeDeleted) throws IOException {
-        membersMap.remove(memberToBeDeleted);
+        inputMap.remove(memberToBeDeleted);
+        outputMap.remove(memberToBeDeleted);
         membersList.remove(memberToBeDeleted);
         notifyListToAllMembers();
         announce(memberToBeDeleted, "member name : " + memberToBeDeleted + " has left the Chat!!");
@@ -85,15 +80,13 @@ public class ServerHandler {
 
         ObjectOutputStream outToClient;
         System.out.println("memberList size : "+membersList.size());
-        System.out.println("memberMap size : "+membersMap.size());
-        for (Map.Entry<String, Socket> member : membersMap.entrySet()) {
-            String eachName = member.getKey();
-            outToClient = outputMap.get(eachName);
+        for (String eachMember : membersList) {
+            outToClient = outputMap.get(eachMember);
             ChitChatMessage chitChatMessage = new ChitChatMessage(MessageType.NOTIFY, membersList);
+            checkMembersConnection(eachMember);
             synchronized (outToClient) {
-                checkMembersConnection(eachName);
                 outToClient.writeObject(chitChatMessage);
-                System.out.println("sent notify list to member : "+eachName);
+                System.out.println("sent notify list to member : "+eachMember);
                 outToClient.flush();
             }
         }
@@ -102,6 +95,7 @@ public class ServerHandler {
 
 
     public void sendListToClient(String requestorName, ObjectOutputStream outToClient) throws IOException {
+
         ChitChatMessage chitChatMessage = new ChitChatMessage(MessageType.NOTIFY, membersList);
 
         checkMembersConnection(requestorName);
@@ -124,15 +118,15 @@ public class ServerHandler {
         serverPanel.displayNewChatMessageOrLog(clientName+" : "+message+"\n");
         
         ObjectOutputStream outToClient;
-        for (Map.Entry<String, Socket> member : membersMap.entrySet()) {
-            String eachName = member.getKey();
+        for (String eachMember : membersList) {
 
-            checkMembersConnection(eachName);
+            checkMembersConnection(eachMember);
+
             ChitChatMessage chitChatMessage = new ChitChatMessage(MessageType.ANNOUNCE);
             chitChatMessage.setName(clientName);
             chitChatMessage.setMessage(message);
 
-            outToClient = outputMap.get(eachName);
+            outToClient = outputMap.get(eachMember);
 
             synchronized (outToClient) {
                 outToClient.writeObject(chitChatMessage);
@@ -140,6 +134,7 @@ public class ServerHandler {
                 System.out.println("announced message >> "+message);
             }
         }
+
     }
 
     /**
@@ -152,31 +147,17 @@ public class ServerHandler {
 
         System.out.println("Checking "+memberName+" connection..");
         ObjectOutputStream outToClient;
-        ObjectInputStream inFromClient;
             try {
 
                 outToClient = outputMap.get(memberName);
-
                 synchronized (outToClient) {
                     ChitChatMessage pollingMessage = new ChitChatMessage(MessageType.RUOK);
                     outToClient.writeObject(pollingMessage);
                     outToClient.flush();
                 }
 
-                inFromClient = inputMap.get(memberName);
-
-                synchronized (inFromClient) {
-                    ChitChatMessage pollingResponse = (ChitChatMessage) inFromClient.readObject();
-                    if (!MessageType.IMOK.equals(pollingResponse.getMessageType())) {
-                        removeMember(memberName);
-                    }
-                }
-
-                //check if client answers with I'm OK type
             } catch (IOException e) {
                 removeMember(memberName);
-            } catch (ClassNotFoundException e) {
-                e.printStackTrace();
             }
         System.out.println("connection "+memberName + " checked!!");
     }
@@ -186,8 +167,8 @@ public class ServerHandler {
         ObjectOutputStream outToClient;
         outToClient = outputMap.get(destinationClient);
         ChitChatMessage chitChatMessage = new ChitChatMessage(MessageType.PRIVATE, sendingClient, message);
+        checkMembersConnection(sendingClient);
         synchronized (outToClient) {
-            checkMembersConnection(sendingClient);
             outToClient.writeObject(chitChatMessage);
             outToClient.flush();
             System.out.println("private sent");

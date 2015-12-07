@@ -33,9 +33,13 @@ public class ChitChatClientService implements Runnable {
             registerToServer();
             while (true) {
                 //block til message come.. wait for server
-                ChitChatMessage messageFromServer = (ChitChatMessage) inFromServer.readObject();
-                System.out.println("message from server received with type : " + messageFromServer.getMessageType());
-                determineActionOnMessage(messageFromServer);
+                ChitChatMessage messageFromServer;
+                synchronized (inFromServer) {
+                     messageFromServer = (ChitChatMessage) inFromServer.readObject();
+                }
+                    System.out.println("message from server received with type : " + messageFromServer.getMessageType());
+                    determineActionOnMessage(messageFromServer);
+
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -50,8 +54,10 @@ public class ChitChatClientService implements Runnable {
     private void registerToServer() throws IOException {
         ChitChatMessage register = new ChitChatMessage(MessageType.REGISTER);
         register.setName(clientPanel.getUserName());
-        outToServer.writeObject(register);
-        outToServer.flush();
+        synchronized (outToServer) {
+            outToServer.writeObject(register);
+            outToServer.flush();
+        }
         System.out.println("sent name to server ...");
     }
 
@@ -84,8 +90,10 @@ public class ChitChatClientService implements Runnable {
      */
     private void doRuok() throws IOException {
         ChitChatMessage returnMessage = new ChitChatMessage(MessageType.IMOK);
-        outToServer.writeObject(returnMessage);
-        outToServer.flush();
+        synchronized (outToServer) {
+            outToServer.writeObject(returnMessage);
+            outToServer.flush();
+        }
         System.out.println("reply I'M OK");
     }
 
