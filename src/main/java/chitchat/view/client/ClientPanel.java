@@ -6,6 +6,7 @@
 
 package chitchat.view.client;
 
+import chitchat.Handler.clientside.service.ChitChatClientService;
 import chitchat.Handler.clientside.service.StartClientService;
 import chitchat.Handler.serverside.ServerHandler;
 import java.io.IOException;
@@ -305,6 +306,7 @@ public class ClientPanel extends javax.swing.JFrame {
         // click send button to send message to chat room
         String message = userName + " : " + msgInputTextField.getText() + "\n";
         // TODO send message to server
+        
         msgDisplayTextArea.append(message);
         msgInputTextField.setText("");
     }//GEN-LAST:event_sendButtonMouseClicked
@@ -327,15 +329,6 @@ public class ClientPanel extends javax.swing.JFrame {
             PrivateChatWindow chatWindow = new PrivateChatWindow(userName, selectedClientName);
             chatWindow.setVisible(true);
         }
-        
-//        // mock data for test
-//        if (evt.getClickCount() == 2) {
-//            String selectedClientName = "Por"; 
-//            //TODO make private chat work
-//            //TODO  Assign to a thread
-//            PrivateChatWindow chatWindow = new PrivateChatWindow(userName, selectedClientName);
-//            chatWindow.setVisible(true);
-//        }
     }//GEN-LAST:event_clientListViewMouseClicked
 
     /**

@@ -285,7 +285,6 @@ public class ServerPanel extends JFrame {
         if(message.length() == 0){
             return;
         }
-        //TODO broadcast
         try {
             // broadcast message to all clients
             ServerHandler.getInstance().announce("Server", message);
@@ -302,7 +301,6 @@ public class ServerPanel extends JFrame {
         if(message.length() == 0){
             return;
         }
-        //TODO broadcast
         try {
             // broadcast message to all clients
             ServerHandler.getInstance().announce("server", message);
