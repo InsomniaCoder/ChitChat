@@ -3,12 +3,15 @@ package chitchat.Handler.clientside;
 import chitchat.message.ChitChatMessage;
 import chitchat.message.MessageType;
 import chitchat.view.client.ClientPanel;
+import chitchat.view.client.PrivateChatWindow;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by PorPaul on 7/12/2558.
@@ -26,10 +29,18 @@ public class ClientHandler {
     private List<String> membersList = new ArrayList<String>();
     private ObjectOutputStream outToServer = null;
     private ObjectInputStream inFromServer = null;
+    private Map<String,PrivateChatWindow> privateChatWindowMap = new HashMap<String, PrivateChatWindow>();
 
     private ClientHandler() {
     }
 
+    public Map<String, PrivateChatWindow> getPrivateChatWindowMap() {
+        return privateChatWindowMap;
+    }
+
+    public void setPrivateChatWindowMap(Map<String, PrivateChatWindow> privateChatWindowMap) {
+        this.privateChatWindowMap = privateChatWindowMap;
+    }
 
     public void setMembersList(List<String> membersList) {
         this.membersList = membersList;

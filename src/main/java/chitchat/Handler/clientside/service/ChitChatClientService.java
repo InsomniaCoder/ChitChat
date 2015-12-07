@@ -116,10 +116,13 @@ public class ChitChatClientService implements Runnable {
      * @param message
      */
     private void doPrivate(String name, String message) throws IOException {
-        //open windows of this name
-        //have a list contain talking client
-        //if on the list just assign the message to that box
-        //else open the box and then assign message
+        if(ClientHandler.getInstance().getPrivateChatWindowMap().containsKey(name)){
+            //send message to the window
+        }else{
+            //open the window  replace ull with reference
+            ClientHandler.getInstance().getPrivateChatWindowMap().put(name,null);
+            //send message to the window
+        }
     }
 
 }
