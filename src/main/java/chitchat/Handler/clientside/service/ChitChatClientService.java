@@ -4,6 +4,7 @@ import chitchat.Handler.clientside.ClientHandler;
 import chitchat.message.ChitChatMessage;
 import chitchat.message.MessageType;
 import chitchat.view.client.ClientPanel;
+
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -40,10 +41,10 @@ public class ChitChatClientService implements Runnable {
                 //block til message come.. wait for server
                 ChitChatMessage messageFromServer;
                 synchronized (inFromServer) {
-                     messageFromServer = (ChitChatMessage) inFromServer.readObject();
+                    messageFromServer = (ChitChatMessage) inFromServer.readObject();
                 }
-                    System.out.println("message from server received with type : " + messageFromServer.getMessageType());
-                    determineActionOnMessage(messageFromServer);
+                System.out.println("message from server received with type : " + messageFromServer.getMessageType());
+                determineActionOnMessage(messageFromServer);
 
             }
         } catch (IOException e) {
@@ -59,11 +60,11 @@ public class ChitChatClientService implements Runnable {
 
         switch (messageType) {
             case ANNOUNCE:
-                doAnnounce(messageFromServer.getName(),messageFromServer.getMessage());
+                doAnnounce(messageFromServer.getName(), messageFromServer.getMessage());
                 break;
             case PRIVATE:
                 System.out.println("doPrivate");
-                doPrivate(messageFromServer.getName(),messageFromServer.getMessage());
+                doPrivate(messageFromServer.getName(), messageFromServer.getMessage());
                 break;
             case NOTIFY:
                 System.out.println("doNotify");
@@ -93,11 +94,8 @@ public class ChitChatClientService implements Runnable {
      */
     private void doNotify(List<String> membersList) {
         //update and assign map to online list
-        ClientHandler.getInstance().setMembersList(null);
-        ClientHandler.getInstance().setMembersList(membersList);
-        for (String s : membersList) {
-            System.out.println("member list : "+s);
-        }
+        System.out.println("getting list size " + membersList.size());
+        ClientHandler.membersList = (membersList);
         clientPanel.displayClientList();
     }
 
@@ -105,25 +103,26 @@ public class ChitChatClientService implements Runnable {
     /**
      * get announce from server and show in the board
      *
-     * @param name sender name
+     * @param name    sender name
      * @param message
      */
     private void doAnnounce(String name, String message) {
-        System.out.println(name+" says >> "+message);
-        clientPanel.displayNewChatMessage(name+" : "+message+"\n");
+        System.out.println(name + " says >> " + message);
+        clientPanel.displayNewChatMessage(name + " : " + message + "\n");
     }
 
     /**
      * show dialogue box that we get the incoming request for private chat
+     *
      * @param name
      * @param message
      */
     private void doPrivate(String name, String message) throws IOException {
-        if(ClientHandler.getInstance().getPrivateChatWindowMap().containsKey(name)){
+        if (ClientHandler.getInstance().getPrivateChatWindowMap().containsKey(name)) {
             //send message to the window
-        }else{
+        } else {
             //open the window  replace ull with reference
-            ClientHandler.getInstance().getPrivateChatWindowMap().put(name,null);
+            ClientHandler.getInstance().getPrivateChatWindowMap().put(name, null);
             //send message to the window
         }
     }

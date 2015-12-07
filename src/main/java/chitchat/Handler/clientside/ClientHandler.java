@@ -8,7 +8,6 @@ import chitchat.view.client.PrivateChatWindow;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -26,16 +25,12 @@ public class ClientHandler {
 
 
     private ClientPanel clientPanel = null;
-    private List<String> membersList = new ArrayList<String>();
+    public static List<String> membersList;
     private ObjectOutputStream outToServer = null;
     private ObjectInputStream inFromServer = null;
     private Map<String,PrivateChatWindow> privateChatWindowMap = new HashMap<String, PrivateChatWindow>();
 
     private ClientHandler() {
-    }
-
-    public List<String> getMembersList() {
-        return membersList;
     }
 
     public Map<String, PrivateChatWindow> getPrivateChatWindowMap() {
@@ -44,10 +39,6 @@ public class ClientHandler {
 
     public void setPrivateChatWindowMap(Map<String, PrivateChatWindow> privateChatWindowMap) {
         this.privateChatWindowMap = privateChatWindowMap;
-    }
-
-    public void setMembersList(List<String> membersList) {
-        this.membersList = membersList;
     }
 
     public void setOutToServer(ObjectOutputStream outToServer) {
@@ -63,40 +54,6 @@ public class ClientHandler {
         this.clientPanel = clientPanel;
     }
 
-    public void announce(String message) throws IOException {
-
-        ChitChatMessage chitChatMessage = new ChitChatMessage(MessageType.ANNOUNCE);
-        chitChatMessage.setName(clientPanel.getUserName());
-        chitChatMessage.setMessage(message);
-
-        synchronized (outToServer) {
-            outToServer.writeObject(chitChatMessage);
-            outToServer.flush();
-        }
-    }
-
-    public void sendNotify() throws IOException {
-
-        ChitChatMessage chitChatMessage = new ChitChatMessage(MessageType.NOTIFY);
-        chitChatMessage.setName(clientPanel.getUserName());
-
-        synchronized (outToServer) {
-            outToServer.writeObject(chitChatMessage);
-            outToServer.flush();
-        }
-
-    }
-
-
-    public void sendImOk() throws IOException {
-
-        ChitChatMessage returnMessage = new ChitChatMessage(MessageType.IMOK);
-        synchronized (outToServer) {
-            outToServer.writeObject(returnMessage);
-            outToServer.flush();
-        }
-        System.out.println("reply I'M OK");
-    }
 
     public void register() throws IOException {
         ChitChatMessage register = new ChitChatMessage(MessageType.REGISTER);
@@ -108,4 +65,43 @@ public class ClientHandler {
         System.out.println("sent name to server ...");
     }
 
+    public void announce(String message) throws IOException {
+
+        ChitChatMessage chitChatMessage = new ChitChatMessage(MessageType.ANNOUNCE);
+        String userName = clientPanel.getUserName();
+        chitChatMessage.setName(userName);
+        chitChatMessage.setMessage(userName +" : "+message+ "\n");
+
+        synchronized (outToServer) {
+            outToServer.writeObject(chitChatMessage);
+            outToServer.flush();
+        }
+    }
+
+    public void sendImOk() throws IOException {
+
+        ChitChatMessage returnMessage = new ChitChatMessage(MessageType.IMOK);
+        synchronized (outToServer) {
+            outToServer.writeObject(returnMessage);
+            outToServer.flush();
+        }
+        System.out.println("reply I'M OK");
+    }
+
+/*
+    *//**
+     * requesting new list
+     * @throws IOException
+     *//*
+    public void sendNotify() throws IOException {
+
+        ChitChatMessage chitChatMessage = new ChitChatMessage(MessageType.NOTIFY);
+        chitChatMessage.setName(clientPanel.getUserName());
+
+        synchronized (outToServer) {
+            outToServer.writeObject(chitChatMessage);
+            outToServer.flush();
+        }
+
+    }*/
 }

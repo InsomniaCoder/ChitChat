@@ -78,15 +78,17 @@ public class ServerHandler {
      */
     public void notifyListToAllMembers() throws IOException {
 
-        ObjectOutputStream outToClient;
-        System.out.println("memberList size : "+membersList.size());
+        System.out.println("memberList size : "+ membersList.size());
+
         for (String eachMember : membersList) {
-            outToClient = outputMap.get(eachMember);
+            ObjectOutputStream   outToClient = outputMap.get(eachMember);
             ChitChatMessage chitChatMessage = new ChitChatMessage(MessageType.NOTIFY, membersList);
+
             checkMembersConnection(eachMember);
+
             synchronized (outToClient) {
+                System.out.println("sent notify list to member : "+eachMember + " size : "+membersList.size());
                 outToClient.writeObject(chitChatMessage);
-                System.out.println("sent notify list to member : "+eachMember);
                 outToClient.flush();
             }
         }

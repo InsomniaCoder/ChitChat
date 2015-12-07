@@ -37,7 +37,6 @@ public class ChitChatServerService implements Runnable {
 
                 ChitChatMessage messageFromClient = null;
 
-
                     synchronized (inFromClient) {
                         //block til message come
                         messageFromClient = (ChitChatMessage) inFromClient.readObject();

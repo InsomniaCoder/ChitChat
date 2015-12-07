@@ -8,7 +8,6 @@ package chitchat.view.client;
 
 import chitchat.Handler.clientside.ClientHandler;
 import chitchat.Handler.clientside.service.StartClientService;
-import chitchat.Handler.serverside.ServerHandler;
 
 import java.io.IOException;
 import java.net.Socket;
@@ -311,18 +310,23 @@ public class ClientPanel extends javax.swing.JFrame {
 
     private void sendButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_sendButtonMouseClicked
         // click send button to send message to chat room
-        String message = userName + " : " + msgInputTextField.getText() + "\n";
-        // TODO send message to server
-
-        msgDisplayTextArea.append(message);
+        String message = msgInputTextField.getText();
+        try {
+            ClientHandler.getInstance().announce(message);
+        } catch (IOException e) {
+            System.out.println(e.getMessage());
+        }
         msgInputTextField.setText("");
     }//GEN-LAST:event_sendButtonMouseClicked
 
     private void msgInputTextFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_msgInputTextFieldActionPerformed
         // press Enter to send message to chat room
-        String message = userName + " : " + msgInputTextField.getText() + "\n";
-        // TODO send message to server
-        msgDisplayTextArea.append(message);
+        String message = msgInputTextField.getText();
+        try {
+            ClientHandler.getInstance().announce(message);
+        } catch (IOException e) {
+            System.out.println(e.getMessage());
+        }
         msgInputTextField.setText("");
     }//GEN-LAST:event_msgInputTextFieldActionPerformed
 
@@ -389,12 +393,16 @@ public class ClientPanel extends javax.swing.JFrame {
     }
 
     public void displayClientList() {
-        List<String> membersList = ClientHandler.getInstance().getMembersList();
-        int numMember = membersList.size();
-        String[] clientList = new String[numMember];
-        membersList.toArray(clientList);
-        clientListView.setListData(clientList);
-        numOnlineLabel.setText(String.valueOf(numMember));
+        List<String> membersList = ClientHandler.membersList;
+        if (null != membersList) {
+            if (membersList.size() != 0) {
+                int numMember = membersList.size();
+                String[] clientList = new String[numMember];
+                membersList.toArray(clientList);
+                clientListView.setListData(clientList);
+                numOnlineLabel.setText(String.valueOf(numMember));
+            }
+        }
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
