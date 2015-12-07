@@ -94,16 +94,17 @@ public class ServerHandler {
     }
 
 
-    public void sendListToClient(String requestorName, ObjectOutputStream outToClient) throws IOException {
+    public void sendListToClient(String requester) throws IOException {
 
         ChitChatMessage chitChatMessage = new ChitChatMessage(MessageType.NOTIFY, membersList);
 
-        checkMembersConnection(requestorName);
+        checkMembersConnection(requester);
 
+        ObjectOutputStream outToClient = outputMap.get(requester);
         synchronized (outToClient) {
             outToClient.writeObject(chitChatMessage);
             outToClient.flush();
-            System.out.println("notify sent to "+requestorName);
+            System.out.println("notify sent to "+requester);
         }
     }
 

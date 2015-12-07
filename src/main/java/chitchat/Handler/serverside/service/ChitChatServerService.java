@@ -85,7 +85,7 @@ public class ChitChatServerService implements Runnable {
      * @param requestorName
      */
     private void doNotify(String requestorName) throws IOException {
-        ServerHandler.getInstance().sendListToClient(requestorName, outToClient);
+        ServerHandler.getInstance().sendListToClient(requestorName);
     }
 
     /**

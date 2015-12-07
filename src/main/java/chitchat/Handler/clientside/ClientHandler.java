@@ -34,6 +34,10 @@ public class ClientHandler {
     private ClientHandler() {
     }
 
+    public List<String> getMembersList() {
+        return membersList;
+    }
+
     public Map<String, PrivateChatWindow> getPrivateChatWindowMap() {
         return privateChatWindowMap;
     }

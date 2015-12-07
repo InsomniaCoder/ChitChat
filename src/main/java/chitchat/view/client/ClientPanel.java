@@ -6,6 +6,7 @@
 
 package chitchat.view.client;
 
+import chitchat.Handler.clientside.ClientHandler;
 import chitchat.Handler.clientside.service.StartClientService;
 import chitchat.Handler.serverside.ServerHandler;
 
@@ -388,7 +389,7 @@ public class ClientPanel extends javax.swing.JFrame {
     }
 
     public void displayClientList() {
-        List<String> membersList = ServerHandler.getInstance().getMembersList();
+        List<String> membersList = ClientHandler.getInstance().getMembersList();
         int numMember = membersList.size();
         String[] clientList = new String[numMember];
         membersList.toArray(clientList);

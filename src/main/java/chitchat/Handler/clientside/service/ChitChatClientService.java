@@ -93,7 +93,11 @@ public class ChitChatClientService implements Runnable {
      */
     private void doNotify(List<String> membersList) {
         //update and assign map to online list
+        ClientHandler.getInstance().setMembersList(null);
         ClientHandler.getInstance().setMembersList(membersList);
+        for (String s : membersList) {
+            System.out.println("member list : "+s);
+        }
         clientPanel.displayClientList();
     }
 
