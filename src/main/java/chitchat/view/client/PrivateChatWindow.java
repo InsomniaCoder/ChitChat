@@ -109,17 +109,17 @@ public class PrivateChatWindow extends javax.swing.JFrame {
 
     private void msgInputTextFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_msgInputTextFieldActionPerformed
         // press Enter on keyboard to send text in private chat
-        String message = userName + " : " + msgInputTextField.getText() + "\n";
+        String message = msgInputTextField.getText();
         // TODO send private message
-        msgDisplayTextArea.append(message);
+        msgDisplayTextArea.append(userName + " : " + message + "\n");
         msgInputTextField.setText("");
     }//GEN-LAST:event_msgInputTextFieldActionPerformed
 
     private void sendButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_sendButtonMouseClicked
         // click send button to send text in private chat
-        String message = userName + " : " + msgInputTextField.getText() + "\n";
+        String message = msgInputTextField.getText();
         // TODO send private message
-        msgDisplayTextArea.append(message);
+        msgDisplayTextArea.append(userName + " : " + message + "\n");
         msgInputTextField.setText("");
     }//GEN-LAST:event_sendButtonMouseClicked
 

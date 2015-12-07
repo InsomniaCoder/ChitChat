@@ -73,7 +73,7 @@ public class StartClientService implements Runnable {
         
         try {
             //start service
-            new Thread(new ChitChatClientService(socket)).start();
+            new Thread(new ChitChatClientService(socket, clientPanel)).start();
         } catch (IOException ex) {
             Logger.getLogger(ClientPanel.class.getName()).log(Level.SEVERE, null, ex);
         }

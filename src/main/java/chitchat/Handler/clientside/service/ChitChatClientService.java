@@ -2,7 +2,7 @@ package chitchat.Handler.clientside.service;
 
 import chitchat.message.ChitChatMessage;
 import chitchat.message.MessageType;
-
+import chitchat.view.client.ClientPanel;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -14,16 +14,17 @@ import java.util.List;
  */
 public class ChitChatClientService implements Runnable {
 
-
+    private ClientPanel clientPanel;
     Socket socket;
     ObjectOutputStream outToServer;
     ObjectInputStream inFromServer;
 
 
-    public ChitChatClientService(Socket socket) throws IOException {
+    public ChitChatClientService(Socket socket, ClientPanel clientPanel) throws IOException {
         this.socket = socket;
         outToServer = new ObjectOutputStream(socket.getOutputStream());
         inFromServer = new ObjectInputStream(socket.getInputStream());
+        this.clientPanel = clientPanel;
     }
 
     @Override
@@ -80,7 +81,7 @@ public class ChitChatClientService implements Runnable {
 
 
     /**
-     * return the IMOK messagge to the server
+     * return the IMOK message to the server
      */
     private void doRuok() throws IOException {
         ChitChatMessage returnMessage = new ChitChatMessage(MessageType.IMOK);
@@ -107,7 +108,7 @@ public class ChitChatClientService implements Runnable {
      */
     private void doAnnounce(String name, String message) {
         System.out.println(name+" says >> "+message);
-        //show this message to the board
+        clientPanel.displayNewChatMessage(name+" : "+message+"\n");
     }
 
     /**

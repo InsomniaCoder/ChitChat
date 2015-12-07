@@ -121,6 +121,8 @@ public class ServerHandler {
      */
     public void announce(String clientName, String message) throws IOException {
 
+        serverPanel.displayNewChatMessageOrLog(clientName+" : "+message+"\n");
+        
         ObjectOutputStream outToClient;
         for (Map.Entry<String, Socket> member : membersMap.entrySet()) {
             String eachName = member.getKey();

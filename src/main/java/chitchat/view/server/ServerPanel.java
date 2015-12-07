@@ -280,30 +280,30 @@ public class ServerPanel extends JFrame {
     }//GEN-LAST:event_DisconnectButtonMouseClicked
 
     private void sendButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_sendButtonMouseClicked
-        String message = "Server : " + msgInputTextField.getText() + "\n";
+        String message = msgInputTextField.getText();
         //TODO broadcast
-//        try {
-//            // broadcast message to all clients
-//            ServerHandler.getInstance().announce(clientName, message);
-//            
-//        } catch (IOException ex) {
-//            Logger.getLogger(ServerPanel.class.getName()).log(Level.SEVERE, null, ex);
-//        }
-        logTextArea.append(message);
+        try {
+            // broadcast message to all clients
+            ServerHandler.getInstance().announce("server", message);
+            
+        } catch (IOException ex) {
+            Logger.getLogger(ServerPanel.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        logTextArea.append("Server : " + message + "\n");
         msgInputTextField.setText("");
     }//GEN-LAST:event_sendButtonMouseClicked
 
     private void msgInputTextFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_msgInputTextFieldActionPerformed
-        String message = "Server : " + msgInputTextField.getText() + "\n";
+        String message = msgInputTextField.getText();
         //TODO broadcast
-//        try {
-//            // broadcast message to all clients
-//            ServerHandler.getInstance().announce(clientName, message);
-//            
-//        } catch (IOException ex) {
-//            Logger.getLogger(ServerPanel.class.getName()).log(Level.SEVERE, null, ex);
-//        }
-        logTextArea.append(message);
+        try {
+            // broadcast message to all clients
+            ServerHandler.getInstance().announce("server", message);
+            
+        } catch (IOException ex) {
+            Logger.getLogger(ServerPanel.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        logTextArea.append("Server : " + message + "\n");
         msgInputTextField.setText("");
     }//GEN-LAST:event_msgInputTextFieldActionPerformed
 
