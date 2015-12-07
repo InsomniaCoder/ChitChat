@@ -52,7 +52,7 @@ public class ChitChatClientService implements Runnable {
         register.setName(clientName);
         outToServer.writeObject(register);
         outToServer.flush();
-        System.out.println("registered");
+        System.out.println("sent name to server ...");
     }
 
     private void determineActionOnMessage(ChitChatMessage messageFromServer) throws IOException {
