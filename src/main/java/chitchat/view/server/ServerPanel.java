@@ -280,7 +280,11 @@ public class ServerPanel extends JFrame {
     }//GEN-LAST:event_DisconnectButtonMouseClicked
 
     private void sendButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_sendButtonMouseClicked
+        // click send button and display the new message
         String message = msgInputTextField.getText();
+        if(message.length() == 0){
+            return;
+        }
         //TODO broadcast
         try {
             // broadcast message to all clients
@@ -294,7 +298,11 @@ public class ServerPanel extends JFrame {
     }//GEN-LAST:event_sendButtonMouseClicked
 
     private void msgInputTextFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_msgInputTextFieldActionPerformed
+        // press Enter on keyboard and display the new message
         String message = msgInputTextField.getText();
+        if(message.length() == 0){
+            return;
+        }
         //TODO broadcast
         try {
             // broadcast message to all clients

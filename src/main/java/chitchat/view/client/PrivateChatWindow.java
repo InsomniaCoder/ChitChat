@@ -110,16 +110,20 @@ public class PrivateChatWindow extends javax.swing.JFrame {
     private void msgInputTextFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_msgInputTextFieldActionPerformed
         // press Enter on keyboard to send text in private chat
         String message = msgInputTextField.getText();
+        if(message.length() == 0){
+            return;
+        }
         // TODO send private message
-        msgDisplayTextArea.append(userName + " : " + message + "\n");
         msgInputTextField.setText("");
     }//GEN-LAST:event_msgInputTextFieldActionPerformed
 
     private void sendButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_sendButtonMouseClicked
         // click send button to send text in private chat
         String message = msgInputTextField.getText();
+        if(message.length() == 0){
+            return;
+        }
         // TODO send private message
-        msgDisplayTextArea.append(userName + " : " + message + "\n");
         msgInputTextField.setText("");
     }//GEN-LAST:event_sendButtonMouseClicked
 
@@ -129,6 +133,10 @@ public class PrivateChatWindow extends javax.swing.JFrame {
         this.dispose();
     }//GEN-LAST:event_formWindowClosed
 
+    private void displayNewChatMessage(String message){
+        msgDisplayTextArea.append(message);
+    }
+    
     /**
      * @param args the command line arguments
      */

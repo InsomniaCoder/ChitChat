@@ -388,14 +388,12 @@ public class ClientPanel extends javax.swing.JFrame {
     }
     
     public void displayClientList(){
-        //TODO uncomment
-//        List<String> membersList = ServerHandler.getInstance().getMembersList();
-//        int numMember = membersList.size();
-//        String[] clientList = new String[numMember];
-//        membersList.toArray(clientList);
-//        clientListView.setListData(clientList);
-//        numOnlineLabel.setText(String.valueOf(numMember));
-        numOnlineLabel.setText(String.valueOf(clientListView.getVisibleRowCount()));
+        List<String> membersList = ServerHandler.getInstance().getMembersList();
+        int numMember = membersList.size();
+        String[] clientList = new String[numMember];
+        membersList.toArray(clientList);
+        clientListView.setListData(clientList);
+        numOnlineLabel.setText(String.valueOf(numMember));
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
