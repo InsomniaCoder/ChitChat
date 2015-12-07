@@ -48,9 +48,8 @@ public class ChitChatClientService implements Runnable {
      * 1.send this name to server
      */
     private void registerToServer() throws IOException {
-        String clientName = "member "+Math.random();
         ChitChatMessage register = new ChitChatMessage(MessageType.REGISTER);
-        register.setName(clientName);
+        register.setName(clientPanel.getUserName());
         outToServer.writeObject(register);
         outToServer.flush();
         System.out.println("sent name to server ...");

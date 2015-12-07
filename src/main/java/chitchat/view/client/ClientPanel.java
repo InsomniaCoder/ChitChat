@@ -420,5 +420,9 @@ public class ClientPanel extends javax.swing.JFrame {
     private static javax.swing.JLabel portLabel;
     private javax.swing.JButton sendButton;
     private static javax.swing.JLabel userNameLabel;
+
+    public String getUserName() {
+        return userName;
+    }
     // End of variables declaration//GEN-END:variables
 }

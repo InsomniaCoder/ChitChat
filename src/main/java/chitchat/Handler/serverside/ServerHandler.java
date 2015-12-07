@@ -58,7 +58,7 @@ public class ServerHandler {
         inputMap.put(clientName, clientInputStream);
         outputMap.put(clientName, clientOutputStream);
         membersList.add(clientName);
-        ServerHandler.getInstance().announce(clientName, " member name : " + clientName + " has joined the Chat!!");
+        ServerHandler.getInstance().announce("server",clientName + " has joined the Chat!!");
         notifyListToAllMembers();
     }
 
@@ -126,11 +126,13 @@ public class ServerHandler {
         ObjectOutputStream outToClient;
         for (Map.Entry<String, Socket> member : membersMap.entrySet()) {
             String eachName = member.getKey();
-            outToClient = outputMap.get(eachName);
+
             checkMembersConnection(eachName);
             ChitChatMessage chitChatMessage = new ChitChatMessage(MessageType.ANNOUNCE);
             chitChatMessage.setName(clientName);
             chitChatMessage.setMessage(message);
+
+            outToClient = outputMap.get(eachName);
 
             synchronized (outToClient) {
                 outToClient.writeObject(chitChatMessage);
