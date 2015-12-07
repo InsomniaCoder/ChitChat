@@ -90,7 +90,7 @@ public class ChitChatServerService implements Runnable {
     private void doRegister(String name) throws IOException, ClassNotFoundException {
         System.out.println("registering "+name);
         this.clientName = name;
-        ServerHandler.getInstance().registerMember(name, socket, inFromClient, outToClient);
+        ServerHandler.getInstance().registerMember(name, inFromClient, outToClient);
     }
 
     /**

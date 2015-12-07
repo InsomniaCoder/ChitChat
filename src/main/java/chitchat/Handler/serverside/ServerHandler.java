@@ -29,9 +29,6 @@ public class ServerHandler {
         return ourInstance;
     }
 
-
-    private Map<String, Socket> membersMap = new HashMap<String, Socket>();
-
     private Map<String, ObjectInputStream> inputMap = new HashMap<String, ObjectInputStream>();
 
     private Map<String, ObjectOutputStream> outputMap = new HashMap<String, ObjectOutputStream>();
@@ -49,16 +46,14 @@ public class ServerHandler {
     /**
      * register member to the Map and notify
      *  @param clientName
-     * @param clientSocket
      * @param clientInputStream
      * @param clientOutputStream
      */
-    public void registerMember(String clientName, Socket clientSocket, ObjectInputStream clientInputStream, ObjectOutputStream clientOutputStream) throws IOException {
-        membersMap.put(clientName, clientSocket);
+    public void registerMember(String clientName,ObjectInputStream clientInputStream, ObjectOutputStream clientOutputStream) throws IOException {
         inputMap.put(clientName, clientInputStream);
         outputMap.put(clientName, clientOutputStream);
         membersList.add(clientName);
-        ServerHandler.getInstance().announce("server",clientName + " has joined the Chat!!");
+        ServerHandler.getInstance().announce("Server",clientName + " has joined the Chat!!");
         notifyListToAllMembers();
     }
 
@@ -69,7 +64,8 @@ public class ServerHandler {
      * @throws IOException
      */
     public void removeMember(String memberToBeDeleted) throws IOException {
-        membersMap.remove(memberToBeDeleted);
+        inputMap.remove(memberToBeDeleted);
+        outputMap.remove(memberToBeDeleted);
         membersList.remove(memberToBeDeleted);
         notifyListToAllMembers();
         announce(memberToBeDeleted, "member name : " + memberToBeDeleted + " has left the Chat!!");
@@ -85,15 +81,13 @@ public class ServerHandler {
 
         ObjectOutputStream outToClient;
         System.out.println("memberList size : "+membersList.size());
-        System.out.println("memberMap size : "+membersMap.size());
-        for (Map.Entry<String, Socket> member : membersMap.entrySet()) {
-            String eachName = member.getKey();
-            outToClient = outputMap.get(eachName);
+        for (String eachMember : membersList) {
+            outToClient = outputMap.get(eachMember);
             ChitChatMessage chitChatMessage = new ChitChatMessage(MessageType.NOTIFY, membersList);
             synchronized (outToClient) {
-                checkMembersConnection(eachName);
+                checkMembersConnection(eachMember);
                 outToClient.writeObject(chitChatMessage);
-                System.out.println("sent notify list to member : "+eachName);
+                System.out.println("sent notify list to member : "+eachMember);
                 outToClient.flush();
             }
         }
@@ -124,15 +118,13 @@ public class ServerHandler {
         serverPanel.displayNewChatMessageOrLog(clientName+" : "+message+"\n");
         
         ObjectOutputStream outToClient;
-        for (Map.Entry<String, Socket> member : membersMap.entrySet()) {
-            String eachName = member.getKey();
-
-            checkMembersConnection(eachName);
+        for (String eachMember : membersList) {
+            checkMembersConnection(eachMember);
             ChitChatMessage chitChatMessage = new ChitChatMessage(MessageType.ANNOUNCE);
             chitChatMessage.setName(clientName);
             chitChatMessage.setMessage(message);
 
-            outToClient = outputMap.get(eachName);
+            outToClient = outputMap.get(eachMember);
 
             synchronized (outToClient) {
                 outToClient.writeObject(chitChatMessage);
@@ -140,6 +132,7 @@ public class ServerHandler {
                 System.out.println("announced message >> "+message);
             }
         }
+
     }
 
     /**
