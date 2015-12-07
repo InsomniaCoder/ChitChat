@@ -33,6 +33,7 @@ public class ChitChatClientService implements Runnable {
             while (true) {
                 //block til message come.. wait for server
                 ChitChatMessage messageFromServer = (ChitChatMessage) inFromServer.readObject();
+                System.out.println("message from server received with type : " + messageFromServer.getMessageType());
                 determineActionOnMessage(messageFromServer);
             }
         } catch (IOException e) {
@@ -46,7 +47,7 @@ public class ChitChatClientService implements Runnable {
      * 1.send this name to server
      */
     private void registerToServer() throws IOException {
-        String clientName = "someThingFromTheForm";
+        String clientName = "member "+Math.random();
         ChitChatMessage register = new ChitChatMessage(MessageType.REGISTER);
         register.setName(clientName);
         outToServer.writeObject(register);
@@ -60,16 +61,20 @@ public class ChitChatClientService implements Runnable {
 
         switch (messageType) {
             case ANNOUNCE:
+                System.out.println("doAnnounce");
                 doAnnounce(messageFromServer.getName(),messageFromServer.getMessage());
                 break;
             case PRIVATE:
                 //todo
+                System.out.println("doprivate");
                 doPrivate(messageFromServer.getName(),messageFromServer.getMessage());
                 break;
             case NOTIFY:
+                System.out.println("doNotify");
                 doNotify(messageFromServer.getMembersList());
                 break;
             case RUOK:
+                System.out.println("doRUOK");
                 doRuok();
                 break;
         }

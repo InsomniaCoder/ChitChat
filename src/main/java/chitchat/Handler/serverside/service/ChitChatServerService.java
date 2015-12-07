@@ -33,9 +33,13 @@ public class ChitChatServerService implements Runnable {
 
         try {
             while (true) {
-                //block til message come
-                ChitChatMessage messageFromClient = (ChitChatMessage) inFromClient.readObject();
-                determineActionOnMessage(messageFromClient);
+
+                synchronized (inFromClient){
+                    //block til message come
+                    ChitChatMessage messageFromClient = (ChitChatMessage) inFromClient.readObject();
+                    System.out.println("message from client received with type : "+messageFromClient.getMessageType());
+                    determineActionOnMessage(messageFromClient);
+                }
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -50,19 +54,34 @@ public class ChitChatServerService implements Runnable {
 
         switch (messageType) {
             case REGISTER:
+                System.out.println("doRegister");
                 doRegister(messageFromClient.getName());
                 break;
             case ANNOUNCE:
+                System.out.println("doAnnounced");
                 doAnnounce(messageFromClient.getMessage());
                 break;
+            case NOTIFY:
+                doNotify(messageFromClient.getName());
             case PRIVATE:
+                System.out.println("doPrivate");
                 doPrivate(messageFromClient.getName(),messageFromClient.getMessage());
                 break;
             case QUIT:
+                System.out.println("doQuit");
                 doQuit();
+
                 break;
 
         }
+    }
+
+    /**
+     * send updated list to request client
+     * @param requestorName
+     */
+    private void doNotify(String requestorName) throws IOException {
+        ServerHandler.getInstance().sendListToClient(requestorName, outToClient);
     }
 
 
@@ -72,7 +91,7 @@ public class ChitChatServerService implements Runnable {
      */
     private void doRegister(String name) throws IOException, ClassNotFoundException {
         this.clientName = name;
-        ServerHandler.getInstance().registerMember(name, socket);
+        ServerHandler.getInstance().registerMember(name, socket, inFromClient, outToClient);
     }
 
     /**

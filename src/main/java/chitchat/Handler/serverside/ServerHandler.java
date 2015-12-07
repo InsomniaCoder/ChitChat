@@ -32,36 +32,35 @@ public class ServerHandler {
 
     private Map<String, Socket> membersMap = new HashMap<String, Socket>();
 
+    private Map<String, ObjectInputStream> inputMap = new HashMap<String, ObjectInputStream>();
+
+    private Map<String, ObjectOutputStream> outputMap = new HashMap<String, ObjectOutputStream>();
+
     private List<String> membersList = new ArrayList<String>();
 
     public static void setServerPanel(ServerPanel serverPanel) {
         ServerHandler.serverPanel = serverPanel;
     }
 
-    public Map<String, Socket> getMembersMap() {
-        return membersMap;
-    }
-
     public List<String> getMembersList() {
         return membersList;
     }
 
-    public void setMembersList(List<String> membersList) {
-        this.membersList = membersList;
-    }
-
     /**
      * register member to the Map and notify
-     *
-     * @param clientName
+     *  @param clientName
      * @param clientSocket
+     * @param clientInputStream
+     * @param clientOutputStream
      */
-    public void registerMember(String clientName, Socket clientSocket) throws IOException {
+    public void registerMember(String clientName, Socket clientSocket, ObjectInputStream clientInputStream, ObjectOutputStream clientOutputStream) throws IOException {
         membersMap.put(clientName, clientSocket);
+        inputMap.put(clientName, clientInputStream);
+        outputMap.put(clientName, clientOutputStream);
         membersList.add(clientName);
-        notifyListToAllMembers();
         ServerHandler.getInstance().announce(clientName, "member name : " + clientName + " has joined the Chat!!");
-        System.out.println("member joined");
+        System.out.println("member "+clientName + " joined");
+        notifyListToAllMembers();
     }
 
     /**
@@ -87,13 +86,29 @@ public class ServerHandler {
 
         ObjectOutputStream outToClient;
         for (Map.Entry<String, Socket> member : membersMap.entrySet()) {
-            Socket eachClient = member.getValue();
-            outToClient = new ObjectOutputStream(eachClient.getOutputStream());
+            outToClient = outputMap.get(member.getKey());
             ChitChatMessage chitChatMessage = new ChitChatMessage(MessageType.NOTIFY, membersList);
-            outToClient.writeObject(chitChatMessage);
-            outToClient.flush();
+            synchronized (outToClient) {
+                checkMembersConnection(member.getKey());
+                outToClient.writeObject(chitChatMessage);
+                System.out.println("sent notify list to member : "+member.getKey());
+                outToClient.flush();
+            }
         }
         serverPanel.displayClientList();
+    }
+
+
+    public void sendListToClient(String requestorName, ObjectOutputStream outToClient) throws IOException {
+        ChitChatMessage chitChatMessage = new ChitChatMessage(MessageType.NOTIFY, membersList);
+
+        checkMembersConnection(requestorName);
+
+        synchronized (outToClient) {
+            outToClient.writeObject(chitChatMessage);
+            outToClient.flush();
+            System.out.println("notify sent to "+requestorName);
+        }
     }
 
     /**
@@ -106,28 +121,31 @@ public class ServerHandler {
 
         ObjectOutputStream outToClient;
         for (Map.Entry<String, Socket> member : membersMap.entrySet()) {
-            Socket eachClient = member.getValue();
-            outToClient = new ObjectOutputStream(eachClient.getOutputStream());
 
+            outToClient = outputMap.get(member.getKey());
             ChitChatMessage chitChatMessage = new ChitChatMessage(MessageType.ANNOUNCE);
             chitChatMessage.setName(clientName);
             chitChatMessage.setMessage(message);
 
-            outToClient.writeObject(chitChatMessage);
-            outToClient.flush();
-            System.out.println("announced");
+            synchronized (outToClient) {
+                checkMembersConnection(clientName);
+                outToClient.writeObject(chitChatMessage);
+                outToClient.flush();
+                System.out.println("announced message :"+message);
+            }
         }
     }
 
     public void sendPrivateMessage(String sendingClient, String destinationClient, String message) throws IOException {
-
             ObjectOutputStream outToClient;
-            Socket eachClient = membersMap.get(destinationClient);
-            outToClient = new ObjectOutputStream(eachClient.getOutputStream());
+            outToClient = outputMap.get(destinationClient);
             ChitChatMessage chitChatMessage = new ChitChatMessage(MessageType.PRIVATE, sendingClient, message);
+        synchronized (outToClient) {
+            checkMembersConnection(sendingClient);
             outToClient.writeObject(chitChatMessage);
             outToClient.flush();
             System.out.println("private sent");
+        }
         }
 
     /**
@@ -136,32 +154,36 @@ public class ServerHandler {
      *
      * @throws IOException
      */
-    public void checkMembersConnection() throws IOException {
+    public void checkMembersConnection(String memberName) throws IOException {
 
+        System.out.println("doRUOK");
         ObjectOutputStream outToClient;
         ObjectInputStream inFromClient;
-        /**
-         * iterate over the map
-         */
-        for (Map.Entry<String, Socket> member : membersMap.entrySet()) {
-            Socket eachSocket = member.getValue();
             try {
-                outToClient = new ObjectOutputStream(eachSocket.getOutputStream());
-                ChitChatMessage pollingMessage = new ChitChatMessage(MessageType.RUOK);
-                outToClient.writeObject(pollingMessage);
-                outToClient.flush();
-                inFromClient = new ObjectInputStream(eachSocket.getInputStream());
-                ChitChatMessage pollingResponse = (ChitChatMessage) inFromClient.readObject();
-                //check if client answers with I'm OK type
-                if (!MessageType.IMOK.equals(pollingResponse.getMessageType())) {
-                    removeMember(member.getKey());
+
+                outToClient = outputMap.get(memberName);
+
+                synchronized (outToClient) {
+                    ChitChatMessage pollingMessage = new ChitChatMessage(MessageType.RUOK);
+                    outToClient.writeObject(pollingMessage);
+                    outToClient.flush();
                 }
+
+                inFromClient = inputMap.get(memberName);
+
+                synchronized (inFromClient) {
+                    ChitChatMessage pollingResponse = (ChitChatMessage) inFromClient.readObject();
+                    if (!MessageType.IMOK.equals(pollingResponse.getMessageType())) {
+                        removeMember(memberName);
+                    }
+                }
+
+                //check if client answers with I'm OK type
             } catch (IOException e) {
-                removeMember(member.getKey());
+                removeMember(memberName);
             } catch (ClassNotFoundException e) {
                 e.printStackTrace();
             }
-        }
         System.out.println("connection checked!!");
     }
 }
