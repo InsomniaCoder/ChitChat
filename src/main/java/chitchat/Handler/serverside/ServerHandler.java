@@ -7,7 +7,6 @@ import chitchat.view.server.ServerPanel;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.net.Socket;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -84,8 +83,8 @@ public class ServerHandler {
         for (String eachMember : membersList) {
             outToClient = outputMap.get(eachMember);
             ChitChatMessage chitChatMessage = new ChitChatMessage(MessageType.NOTIFY, membersList);
+            checkMembersConnection(eachMember);
             synchronized (outToClient) {
-                checkMembersConnection(eachMember);
                 outToClient.writeObject(chitChatMessage);
                 System.out.println("sent notify list to member : "+eachMember);
                 outToClient.flush();
@@ -96,6 +95,7 @@ public class ServerHandler {
 
 
     public void sendListToClient(String requestorName, ObjectOutputStream outToClient) throws IOException {
+
         ChitChatMessage chitChatMessage = new ChitChatMessage(MessageType.NOTIFY, membersList);
 
         checkMembersConnection(requestorName);
@@ -119,7 +119,9 @@ public class ServerHandler {
         
         ObjectOutputStream outToClient;
         for (String eachMember : membersList) {
+
             checkMembersConnection(eachMember);
+
             ChitChatMessage chitChatMessage = new ChitChatMessage(MessageType.ANNOUNCE);
             chitChatMessage.setName(clientName);
             chitChatMessage.setMessage(message);
@@ -145,31 +147,17 @@ public class ServerHandler {
 
         System.out.println("Checking "+memberName+" connection..");
         ObjectOutputStream outToClient;
-        ObjectInputStream inFromClient;
             try {
 
                 outToClient = outputMap.get(memberName);
-
                 synchronized (outToClient) {
                     ChitChatMessage pollingMessage = new ChitChatMessage(MessageType.RUOK);
                     outToClient.writeObject(pollingMessage);
                     outToClient.flush();
                 }
 
-                inFromClient = inputMap.get(memberName);
-
-                synchronized (inFromClient) {
-                    ChitChatMessage pollingResponse = (ChitChatMessage) inFromClient.readObject();
-                    if (!MessageType.IMOK.equals(pollingResponse.getMessageType())) {
-                        removeMember(memberName);
-                    }
-                }
-
-                //check if client answers with I'm OK type
             } catch (IOException e) {
                 removeMember(memberName);
-            } catch (ClassNotFoundException e) {
-                e.printStackTrace();
             }
         System.out.println("connection "+memberName + " checked!!");
     }
@@ -179,8 +167,8 @@ public class ServerHandler {
         ObjectOutputStream outToClient;
         outToClient = outputMap.get(destinationClient);
         ChitChatMessage chitChatMessage = new ChitChatMessage(MessageType.PRIVATE, sendingClient, message);
+        checkMembersConnection(sendingClient);
         synchronized (outToClient) {
-            checkMembersConnection(sendingClient);
             outToClient.writeObject(chitChatMessage);
             outToClient.flush();
             System.out.println("private sent");

@@ -34,12 +34,15 @@ public class ChitChatServerService implements Runnable {
         try {
             while (true) {
 
+                ChitChatMessage messageFromClient;
+
                 synchronized (inFromClient){
                     //block til message come
-                    ChitChatMessage messageFromClient = (ChitChatMessage) inFromClient.readObject();
+                    messageFromClient = (ChitChatMessage) inFromClient.readObject();
                     System.out.println("message from client received with type : "+messageFromClient.getMessageType());
-                    determineActionOnMessage(messageFromClient);
                 }
+
+                determineActionOnMessage(messageFromClient);
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -66,12 +69,9 @@ public class ChitChatServerService implements Runnable {
                 doPrivate(messageFromClient.getName(),messageFromClient.getMessage());
                 break;
             case QUIT:
-                System.out.println("doQuit");
                 doQuit();
-
                 break;
-
-        }
+        }//end switch
     }
 
     /**
@@ -81,7 +81,6 @@ public class ChitChatServerService implements Runnable {
     private void doNotify(String requestorName) throws IOException {
         ServerHandler.getInstance().sendListToClient(requestorName, outToClient);
     }
-
 
     /**
      * get the client name and register
