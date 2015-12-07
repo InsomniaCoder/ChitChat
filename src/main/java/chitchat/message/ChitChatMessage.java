@@ -1,21 +1,17 @@
 package chitchat.message;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
  * Created by PorPaul on 5/12/2558.
  */
-public class ChitChatMessage {
+public class ChitChatMessage implements Serializable{
 
     MessageType messageType;
     List<String> membersList;
     String message;
     String name;
-
-    public ChitChatMessage(MessageType messageType, String message) {
-        this.messageType = messageType;
-        this.message = message;
-    }
 
     public ChitChatMessage(MessageType notify, List<String> membersList) {
         this.messageType = notify;
