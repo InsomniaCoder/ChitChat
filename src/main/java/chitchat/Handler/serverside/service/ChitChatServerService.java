@@ -4,6 +4,7 @@ import chitchat.Handler.serverside.ServerHandler;
 import chitchat.message.ChitChatMessage;
 import chitchat.message.MessageType;
 
+import java.io.EOFException;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -34,15 +35,18 @@ public class ChitChatServerService implements Runnable {
         try {
             while (true) {
 
-                ChitChatMessage messageFromClient;
+                ChitChatMessage messageFromClient = null;
 
-                synchronized (inFromClient){
-                    //block til message come
-                    messageFromClient = (ChitChatMessage) inFromClient.readObject();
-                    System.out.println("message from client received with type : "+messageFromClient.getMessageType());
+                try {
+                    synchronized (inFromClient) {
+                        //block til message come
+                        messageFromClient = (ChitChatMessage) inFromClient.readObject();
+                        System.out.println("message from client received with type : " + messageFromClient.getMessageType());
+                        determineActionOnMessage(messageFromClient);
+                    }
+                }catch (EOFException e){
+                    ServerHandler.getInstance().removeMember(clientName);
                 }
-
-                determineActionOnMessage(messageFromClient);
             }
         } catch (IOException e) {
             e.printStackTrace();

@@ -66,9 +66,9 @@ public class ServerHandler {
         inputMap.remove(memberToBeDeleted);
         outputMap.remove(memberToBeDeleted);
         membersList.remove(memberToBeDeleted);
-        notifyListToAllMembers();
-        announce(memberToBeDeleted, "member name : " + memberToBeDeleted + " has left the Chat!!");
+        announce("Server", " : " + memberToBeDeleted + " has left the Chat!!");
         System.out.println("member left");
+        notifyListToAllMembers();
     }
 
     /**
