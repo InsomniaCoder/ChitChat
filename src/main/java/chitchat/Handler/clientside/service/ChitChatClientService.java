@@ -61,7 +61,6 @@ public class ChitChatClientService implements Runnable {
 
         switch (messageType) {
             case ANNOUNCE:
-                System.out.println("doAnnounce");
                 doAnnounce(messageFromServer.getName(),messageFromServer.getMessage());
                 break;
             case PRIVATE:
@@ -74,7 +73,6 @@ public class ChitChatClientService implements Runnable {
                 doNotify(messageFromServer.getMembersList());
                 break;
             case RUOK:
-                System.out.println("doRUOK");
                 doRuok();
                 break;
         }
@@ -88,6 +86,7 @@ public class ChitChatClientService implements Runnable {
         ChitChatMessage returnMessage = new ChitChatMessage(MessageType.IMOK);
         outToServer.writeObject(returnMessage);
         outToServer.flush();
+        System.out.println("reply I'M OK");
     }
 
     /**
@@ -107,6 +106,7 @@ public class ChitChatClientService implements Runnable {
      * @param message
      */
     private void doAnnounce(String name, String message) {
+        System.out.println(name+" says >> "+message);
         //show this message to the board
     }
 
