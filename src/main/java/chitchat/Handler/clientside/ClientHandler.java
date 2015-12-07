@@ -60,6 +60,19 @@ public class ClientHandler {
         }
     }
 
+    public void sendNotify() throws IOException {
+
+        ChitChatMessage chitChatMessage = new ChitChatMessage(MessageType.NOTIFY);
+        chitChatMessage.setName(clientPanel.getUserName());
+
+        synchronized (outToServer) {
+            outToServer.writeObject(chitChatMessage);
+            outToServer.flush();
+        }
+
+    }
+
+
     public void sendImOk() throws IOException {
 
         ChitChatMessage returnMessage = new ChitChatMessage(MessageType.IMOK);
