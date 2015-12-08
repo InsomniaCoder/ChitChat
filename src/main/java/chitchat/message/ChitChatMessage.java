@@ -1,7 +1,6 @@
 package chitchat.message;
 
 import java.io.Serializable;
-import java.util.List;
 
 /**
  * Created by PorPaul on 5/12/2558.

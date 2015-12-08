@@ -8,11 +8,9 @@ package chitchat.view.client;
 
 import chitchat.Handler.clientside.ClientHandler;
 import chitchat.Handler.clientside.service.StartClientService;
-import chitchat.Handler.serverside.ServerHandler;
 
 import java.io.IOException;
 import java.net.Socket;
-import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -335,9 +333,7 @@ public class ClientPanel extends javax.swing.JFrame {
         // double click a client in client list to start private chat
         if (evt.getClickCount() == 2 && clientListView.getSelectedValue() != null) {
             String chattingClientName = clientListView.getSelectedValue().toString();
-            //TODO make private chat work
-            //TODO fix problem when close private chat window then the panel is closed too
-            PrivateChatWindow chatWindow = new PrivateChatWindow(chattingClientName);
+            PrivateChatWindow chatWindow = new PrivateChatWindow(userName, chattingClientName);
             ClientHandler.getInstance().addPrivateChatWindow(chattingClientName, chatWindow);
             chatWindow.setVisible(true);
         }

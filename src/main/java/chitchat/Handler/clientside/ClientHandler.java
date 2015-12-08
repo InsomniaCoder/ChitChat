@@ -9,7 +9,6 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -75,6 +74,24 @@ public class ClientHandler {
         ChitChatMessage chitChatMessage = new ChitChatMessage(MessageType.ANNOUNCE);
         String userName = clientPanel.getUserName();
         chitChatMessage.setName(userName);
+        chitChatMessage.setMessage(message);
+
+        synchronized (outToServer) {
+            outToServer.writeObject(chitChatMessage);
+            outToServer.flush();
+        }
+    }
+    
+    /**
+     * send private chat message to another client via server
+     * @param receiverClientName
+     * @param message
+     * @throws IOException 
+     */
+    public void sendPrivate(String receiverClientName, String message) throws IOException {
+
+        ChitChatMessage chitChatMessage = new ChitChatMessage(MessageType.PRIVATE);
+        chitChatMessage.setName(receiverClientName);
         chitChatMessage.setMessage(message);
 
         synchronized (outToServer) {

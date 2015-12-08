@@ -7,13 +7,17 @@
 package chitchat.view.client;
 
 import chitchat.Handler.clientside.ClientHandler;
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
  * @author GiftzyEiei
  */
 public class PrivateChatWindow extends javax.swing.JFrame {
-    private String chattingClientName;
+    private String userName;
+    private String receiverClientName;
     
     private PrivateChatWindow() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
@@ -21,12 +25,14 @@ public class PrivateChatWindow extends javax.swing.JFrame {
 
     /**
      * Creates new form PrivateChatWindow
-     * @param chattingClientName name of the selected client from client list
+     * @param userName name of the current user of this application
+     * @param receiverClientName name of the selected client from client list
      */
-    public PrivateChatWindow(String chattingClientName) {
+    public PrivateChatWindow(String userName, String receiverClientName) {
         initComponents();
-        this.chattingClientName = chattingClientName;
-        chattingClientLabel.setText(chattingClientName);//display selected client name on top left of window
+        this.userName = userName;
+        this.receiverClientName = receiverClientName;
+        receiverClientLabel.setText(receiverClientName);//display selected client name on top left of window
     }
 
     /**
@@ -40,7 +46,7 @@ public class PrivateChatWindow extends javax.swing.JFrame {
 
         msgInputTextField = new javax.swing.JTextField();
         sendButton = new javax.swing.JButton();
-        chattingClientLabel = new javax.swing.JLabel();
+        receiverClientLabel = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
         msgDisplayTextArea = new javax.swing.JTextArea();
 
@@ -64,7 +70,7 @@ public class PrivateChatWindow extends javax.swing.JFrame {
             }
         });
 
-        chattingClientLabel.setText("client");
+        receiverClientLabel.setText("client");
 
         msgDisplayTextArea.setEditable(false);
         msgDisplayTextArea.setColumns(20);
@@ -84,7 +90,7 @@ public class PrivateChatWindow extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(sendButton))
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(chattingClientLabel)
+                        .addComponent(receiverClientLabel)
                         .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
@@ -92,7 +98,7 @@ public class PrivateChatWindow extends javax.swing.JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(chattingClientLabel)
+                .addComponent(receiverClientLabel)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 324, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -111,8 +117,14 @@ public class PrivateChatWindow extends javax.swing.JFrame {
         if(message.length() == 0){
             return;
         }
-        // TODO send private message
+        try {
+            // send private message
+            ClientHandler.getInstance().sendPrivate(receiverClientName, message);
+        } catch (IOException ex) {
+            Logger.getLogger(PrivateChatWindow.class.getName()).log(Level.SEVERE, null, ex);
+        }
         msgInputTextField.setText("");
+        msgDisplayTextArea.append(userName+" : "+message+"\n");
     }//GEN-LAST:event_msgInputTextFieldActionPerformed
 
     private void sendButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_sendButtonMouseClicked
@@ -121,13 +133,19 @@ public class PrivateChatWindow extends javax.swing.JFrame {
         if(message.length() == 0){
             return;
         }
-        // TODO send private message
+        try {
+            // send private message
+            ClientHandler.getInstance().sendPrivate(receiverClientName, message);
+        } catch (IOException ex) {
+            Logger.getLogger(PrivateChatWindow.class.getName()).log(Level.SEVERE, null, ex);
+        }
         msgInputTextField.setText("");
+        msgDisplayTextArea.append(userName+" : "+message+"\n");
     }//GEN-LAST:event_sendButtonMouseClicked
 
     private void formWindowClosed(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosed
         // close window
-        ClientHandler.getInstance().removePrivateChatWindow(chattingClientName);
+        ClientHandler.getInstance().removePrivateChatWindow(receiverClientName);
         this.dispose();
     }//GEN-LAST:event_formWindowClosed
 
@@ -171,10 +189,10 @@ public class PrivateChatWindow extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JLabel chattingClientLabel;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTextArea msgDisplayTextArea;
     private javax.swing.JTextField msgInputTextField;
+    private javax.swing.JLabel receiverClientLabel;
     private javax.swing.JButton sendButton;
     // End of variables declaration//GEN-END:variables
 }

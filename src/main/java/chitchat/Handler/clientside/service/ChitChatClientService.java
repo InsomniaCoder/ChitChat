@@ -10,7 +10,6 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
-import java.util.List;
 
 /**
  * Created by PorPaul on 5/12/2558.
@@ -113,23 +112,25 @@ public class ChitChatClientService implements Runnable {
     }
 
     /**
-     * show dialogue box that we get the incoming request for private chat
+     * Display the new chat message which has been sent by another client in the private window.
+     * If the private chat window has been closed or no window yet,
+     * this method will create a new one and display the message.
      *
-     * @param name
+     * @param senderClientName
      * @param message
      */
-    private void doPrivate(String name, String message) throws IOException {
-        if (ClientHandler.getInstance().getPrivateChatWindowMap().containsKey(name)) {
+    private void doPrivate(String senderClientName, String message) throws IOException {
+        if (ClientHandler.getInstance().getPrivateChatWindowMap().containsKey(senderClientName)) {
             //send message to the window
-            PrivateChatWindow window = ClientHandler.getInstance().getPrivateChatWindowMap().get(name);
-            window.displayNewChatMessage(name+" : "+message+"\n");
+            PrivateChatWindow window = ClientHandler.getInstance().getPrivateChatWindowMap().get(senderClientName);
+            window.displayNewChatMessage(senderClientName+" : "+message+"\n");
         } else {
             // no private window for this client. open the window.
-            PrivateChatWindow window = new PrivateChatWindow(name);
-            ClientHandler.getInstance().getPrivateChatWindowMap().put(name, window);
+            PrivateChatWindow window = new PrivateChatWindow(clientPanel.getUserName(), senderClientName);
+            ClientHandler.getInstance().getPrivateChatWindowMap().put(senderClientName, window);
             window.setVisible(true);
             //send message to the window
-            window.displayNewChatMessage(name+" : "+message+"\n");
+            window.displayNewChatMessage(senderClientName+" : "+message+"\n");
         }
     }
 

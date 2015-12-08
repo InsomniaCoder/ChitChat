@@ -303,12 +303,11 @@ public class ServerPanel extends JFrame {
         }
         try {
             // broadcast message to all clients
-            ServerHandler.getInstance().announce("server", message);
+            ServerHandler.getInstance().announce("Server", message);
             
         } catch (IOException ex) {
             Logger.getLogger(ServerPanel.class.getName()).log(Level.SEVERE, null, ex);
         }
-        logTextArea.append("Server : " + message + "\n");
         msgInputTextField.setText("");
     }//GEN-LAST:event_msgInputTextFieldActionPerformed
 
