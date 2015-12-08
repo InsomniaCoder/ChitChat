@@ -9,13 +9,13 @@ import java.util.List;
 public class ChitChatMessage implements Serializable{
 
     MessageType messageType;
-    List<String> membersList;
+    String[] membersArray;
     String message;
     String name;
 
-    public ChitChatMessage(MessageType notify, List<String> membersList) {
+    public ChitChatMessage(MessageType notify, String[] membersArrayr) {
         this.messageType = notify;
-        this.membersList = membersList;
+        this.membersArray = membersArrayr;
     }
 
     public ChitChatMessage(MessageType messageType) {
@@ -36,12 +36,12 @@ public class ChitChatMessage implements Serializable{
         this.messageType = messageType;
     }
 
-    public List<String> getMembersList() {
-        return membersList;
+    public String[] getMembersArray() {
+        return membersArray;
     }
 
-    public void setMembersList(List<String> membersList) {
-        this.membersList = membersList;
+    public void setMembersArray(String[] membersArray) {
+        this.membersArray = membersArray;
     }
 
     public String getMessage() {
