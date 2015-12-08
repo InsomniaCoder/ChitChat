@@ -331,10 +331,13 @@ public class ClientPanel extends javax.swing.JFrame {
     private void clientListViewMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_clientListViewMouseClicked
         // double click a client in client list to start private chat
         if (evt.getClickCount() == 2 && clientListView.getSelectedValue() != null) {
-            String chattingClientName = clientListView.getSelectedValue().toString();
-            PrivateChatWindow chatWindow = new PrivateChatWindow(userName, chattingClientName);
-            ClientHandler.getInstance().addPrivateChatWindow(chattingClientName, chatWindow);
-            chatWindow.setVisible(true);
+            String receiverClientName = clientListView.getSelectedValue().toString();
+            PrivateChatWindow chatWindow = ClientHandler.getInstance().getPrivateChatWindowMap().get(receiverClientName);
+            if( chatWindow == null ) {
+                chatWindow = new PrivateChatWindow(userName, receiverClientName);
+                ClientHandler.getInstance().addPrivateChatWindow(receiverClientName, chatWindow);
+                chatWindow.setVisible(true);
+            }
         }
     }//GEN-LAST:event_clientListViewMouseClicked
 

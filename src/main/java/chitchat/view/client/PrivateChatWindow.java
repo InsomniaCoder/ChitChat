@@ -33,6 +33,7 @@ public class PrivateChatWindow extends javax.swing.JFrame {
         this.userName = userName;
         this.receiverClientName = receiverClientName;
         receiverClientLabel.setText(receiverClientName);//display selected client name on top left of window
+        this.setTitle(userName+" -> "+receiverClientName+" [Private Chat]");
     }
 
     /**
