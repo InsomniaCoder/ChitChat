@@ -82,7 +82,11 @@ public class ServerHandler {
 
         for (String eachMember : membersList) {
             ObjectOutputStream   outToClient = outputMap.get(eachMember);
-            ChitChatMessage chitChatMessage = new ChitChatMessage(MessageType.NOTIFY, membersList);
+
+            String[] transformedArray = new String[membersList.size()];
+            membersList.toArray(transformedArray);
+
+            ChitChatMessage chitChatMessage = new ChitChatMessage(MessageType.NOTIFY, transformedArray);
 
             checkMembersConnection(eachMember);
 
@@ -98,7 +102,9 @@ public class ServerHandler {
 
     public void sendListToClient(String requester) throws IOException {
 
-        ChitChatMessage chitChatMessage = new ChitChatMessage(MessageType.NOTIFY, membersList);
+        String[] transformedArray = null;
+        membersList.toArray(transformedArray);
+        ChitChatMessage chitChatMessage = new ChitChatMessage(MessageType.NOTIFY, transformedArray);
 
         checkMembersConnection(requester);
 

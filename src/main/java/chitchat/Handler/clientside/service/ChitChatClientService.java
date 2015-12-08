@@ -69,7 +69,7 @@ public class ChitChatClientService implements Runnable {
                 break;
             case NOTIFY:
                 System.out.println("doNotify");
-                doNotify(messageFromServer.getMembersList());
+                doNotify(messageFromServer.getMembersArray());
                 break;
             case RUOK:
                 doRuok();
@@ -91,12 +91,12 @@ public class ChitChatClientService implements Runnable {
     /**
      * get the updated list and show in the members list
      *
-     * @param membersList
+     * @param membersArray
      */
-    private void doNotify(List<String> membersList) {
+    private void doNotify(String[] membersArray) {
         //update and assign map to online list
-        System.out.println("getting list size " + membersList.size());
-        ClientHandler.membersList = (membersList);
+        System.out.println("getting list size " + membersArray.length);
+        ClientHandler.membersArray =  membersArray;
         clientPanel.displayClientList();
     }
 

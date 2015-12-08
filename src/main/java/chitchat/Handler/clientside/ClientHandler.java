@@ -24,7 +24,7 @@ public class ClientHandler {
     }
 
     private ClientPanel clientPanel = null;
-    public static List<String> membersList;
+    public static String[] membersArray;
     private ObjectOutputStream outToServer = null;
     private ObjectInputStream inFromServer = null;
     private Map<String, PrivateChatWindow> privateChatWindowMap = new HashMap<String, PrivateChatWindow>();
