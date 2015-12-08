@@ -6,6 +6,8 @@
 
 package chitchat.view.client;
 
+import javax.swing.JOptionPane;
+
 /**
  *
  * @author GiftzyEiei
@@ -99,9 +101,51 @@ public class ClientInitiation extends javax.swing.JFrame {
         String ip = ipTextField.getText();
         String port = portTextField.getText();
         String userName = userNameTextField.getText();
-        ClientPanel clientPanel = new ClientPanel(ip, port, userName, this);
+        
+        if(ip.trim().length()==0 || port.trim().length()==0 || userName.trim().length()==0) {
+            JOptionPane.showMessageDialog(this,
+                    "All fields are required. Please fill out every field",
+                    "Message",
+                    JOptionPane.INFORMATION_MESSAGE);
+            return;
+        }
+        
+        int portNum = getPortNumber(port);
+        if (portNum == -1) {
+            JOptionPane.showMessageDialog(this,
+                    "Please enter port number in the right format.",
+                    "Message",
+                    JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        
+        boolean correct = validatePortNumber(portNum);
+        if (!correct) {
+            JOptionPane.showMessageDialog(this,
+                    "Port number is incorrect, port should be between 49151 and 65535.",
+                    "Message",
+                    JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        
+        new ClientPanel(ip, port, userName, this);
     }//GEN-LAST:event_connectButtonMouseClicked
 
+    private static int getPortNumber(String portString) {
+
+        int portNumber;
+        try {
+            portNumber = Integer.valueOf(portString);
+        } catch (NumberFormatException e) {
+            return -1;
+        }
+        return portNumber;
+    }
+    
+    private static boolean validatePortNumber(int portNumber) {
+        return portNumber > 1024 && portNumber <= 65535;
+    }
+    
     /**
      * @param args the command line arguments
      */

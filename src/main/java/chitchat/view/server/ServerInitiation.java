@@ -38,6 +38,7 @@ public class ServerInitiation extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("ChitChat for Server");
+        setResizable(false);
 
         jLabel1.setText("Port :");
 
@@ -100,7 +101,7 @@ public class ServerInitiation extends javax.swing.JFrame {
         }
 
         try {
-            ServerPanel serverPanel = new ServerPanel(this, portText);
+            new ServerPanel(this, portText);
         } catch (IOException ex) {
             Logger.getLogger(ServerInitiation.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -153,11 +154,7 @@ public class ServerInitiation extends javax.swing.JFrame {
     }
 
     private static boolean validatePortNumber(int portNumber) {
-        //check if the port is valid for network protocol
-        if (portNumber <= 1024 || portNumber > 65535) {
-            return false;
-        }
-        return true;
+        return portNumber > 1024 && portNumber <= 65535;
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
