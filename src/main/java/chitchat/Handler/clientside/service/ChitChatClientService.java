@@ -4,6 +4,7 @@ import chitchat.Handler.clientside.ClientHandler;
 import chitchat.message.ChitChatMessage;
 import chitchat.message.MessageType;
 import chitchat.view.client.ClientPanel;
+import chitchat.view.client.PrivateChatWindow;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -120,10 +121,15 @@ public class ChitChatClientService implements Runnable {
     private void doPrivate(String name, String message) throws IOException {
         if (ClientHandler.getInstance().getPrivateChatWindowMap().containsKey(name)) {
             //send message to the window
+            PrivateChatWindow window = ClientHandler.getInstance().getPrivateChatWindowMap().get(name);
+            window.displayNewChatMessage(name+" : "+message+"\n");
         } else {
-            //open the window  replace ull with reference
-            ClientHandler.getInstance().getPrivateChatWindowMap().put(name, null);
+            // no private window for this client. open the window.
+            PrivateChatWindow window = new PrivateChatWindow(name);
+            ClientHandler.getInstance().getPrivateChatWindowMap().put(name, window);
+            window.setVisible(true);
             //send message to the window
+            window.displayNewChatMessage(name+" : "+message+"\n");
         }
     }
 

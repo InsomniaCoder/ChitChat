@@ -23,12 +23,11 @@ public class ClientHandler {
         return ourInstance;
     }
 
-
     private ClientPanel clientPanel = null;
     public static List<String> membersList;
     private ObjectOutputStream outToServer = null;
     private ObjectInputStream inFromServer = null;
-    private Map<String,PrivateChatWindow> privateChatWindowMap = new HashMap<String, PrivateChatWindow>();
+    private Map<String, PrivateChatWindow> privateChatWindowMap = new HashMap<String, PrivateChatWindow>();
 
     private ClientHandler() {
     }
@@ -41,10 +40,17 @@ public class ClientHandler {
         this.privateChatWindowMap = privateChatWindowMap;
     }
 
+    public void addPrivateChatWindow(String chattingClientName, PrivateChatWindow privateChatWindow) {
+        privateChatWindowMap.put(chattingClientName, privateChatWindow);
+    }
+
+    public void removePrivateChatWindow(String chattingClientName) {
+        privateChatWindowMap.remove(chattingClientName);
+    }
+
     public void setOutToServer(ObjectOutputStream outToServer) {
         this.outToServer = outToServer;
     }
-
 
     public void setInFromServer(ObjectInputStream inFromServer) {
         this.inFromServer = inFromServer;
@@ -53,7 +59,6 @@ public class ClientHandler {
     public void setClientPanel(ClientPanel clientPanel) {
         this.clientPanel = clientPanel;
     }
-
 
     public void register() throws IOException {
         ChitChatMessage register = new ChitChatMessage(MessageType.REGISTER);
@@ -88,20 +93,22 @@ public class ClientHandler {
         System.out.println("reply I'M OK");
     }
 
-/*
-    *//**
+    /*
+     */    /**
      * requesting new list
+     *
      * @throws IOException
      *//*
-    public void sendNotify() throws IOException {
+     public void sendNotify() throws IOException {
 
-        ChitChatMessage chitChatMessage = new ChitChatMessage(MessageType.NOTIFY);
-        chitChatMessage.setName(clientPanel.getUserName());
+     ChitChatMessage chitChatMessage = new ChitChatMessage(MessageType.NOTIFY);
+     chitChatMessage.setName(clientPanel.getUserName());
 
-        synchronized (outToServer) {
-            outToServer.writeObject(chitChatMessage);
-            outToServer.flush();
-        }
+     synchronized (outToServer) {
+     outToServer.writeObject(chitChatMessage);
+     outToServer.flush();
+     }
 
-    }*/
+     }*/
+
 }

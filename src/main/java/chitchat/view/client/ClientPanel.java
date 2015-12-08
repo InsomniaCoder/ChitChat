@@ -334,11 +334,11 @@ public class ClientPanel extends javax.swing.JFrame {
     private void clientListViewMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_clientListViewMouseClicked
         // double click a client in client list to start private chat
         if (evt.getClickCount() == 2 && clientListView.getSelectedValue() != null) {
-            String selectedClientName = clientListView.getSelectedValue().toString();
+            String chattingClientName = clientListView.getSelectedValue().toString();
             //TODO make private chat work
-            //TODO Assign to a thread (if needed)
             //TODO fix problem when close private chat window then the panel is closed too
-            PrivateChatWindow chatWindow = new PrivateChatWindow(userName, selectedClientName);
+            PrivateChatWindow chatWindow = new PrivateChatWindow(chattingClientName);
+            ClientHandler.getInstance().addPrivateChatWindow(chattingClientName, chatWindow);
             chatWindow.setVisible(true);
         }
     }//GEN-LAST:event_clientListViewMouseClicked

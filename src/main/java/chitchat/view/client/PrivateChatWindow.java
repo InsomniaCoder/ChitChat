@@ -6,13 +6,14 @@
 
 package chitchat.view.client;
 
+import chitchat.Handler.clientside.ClientHandler;
+
 /**
  *
  * @author GiftzyEiei
  */
 public class PrivateChatWindow extends javax.swing.JFrame {
-    private String userName;
-    private String selectedClientName;
+    private String chattingClientName;
     
     private PrivateChatWindow() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
@@ -20,15 +21,12 @@ public class PrivateChatWindow extends javax.swing.JFrame {
 
     /**
      * Creates new form PrivateChatWindow
-     * @param userName name of the current user
-     * @param selectedCleintName name of the selected client from client list
+     * @param chattingClientName name of the selected client from client list
      */
-    public PrivateChatWindow(String userName, String selectedCleintName) {
+    public PrivateChatWindow(String chattingClientName) {
         initComponents();
-        this.userName = userName;
-        this.selectedClientName = selectedCleintName;
-        selectedClientLabel.setText(selectedCleintName);//display selected client name on top left of window
-        //TODO make private chat work
+        this.chattingClientName = chattingClientName;
+        chattingClientLabel.setText(chattingClientName);//display selected client name on top left of window
     }
 
     /**
@@ -42,11 +40,11 @@ public class PrivateChatWindow extends javax.swing.JFrame {
 
         msgInputTextField = new javax.swing.JTextField();
         sendButton = new javax.swing.JButton();
-        selectedClientLabel = new javax.swing.JLabel();
+        chattingClientLabel = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
         msgDisplayTextArea = new javax.swing.JTextArea();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         addWindowListener(new java.awt.event.WindowAdapter() {
             public void windowClosed(java.awt.event.WindowEvent evt) {
                 formWindowClosed(evt);
@@ -66,7 +64,7 @@ public class PrivateChatWindow extends javax.swing.JFrame {
             }
         });
 
-        selectedClientLabel.setText("client");
+        chattingClientLabel.setText("client");
 
         msgDisplayTextArea.setEditable(false);
         msgDisplayTextArea.setColumns(20);
@@ -86,7 +84,7 @@ public class PrivateChatWindow extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(sendButton))
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(selectedClientLabel)
+                        .addComponent(chattingClientLabel)
                         .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
@@ -94,7 +92,7 @@ public class PrivateChatWindow extends javax.swing.JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(selectedClientLabel)
+                .addComponent(chattingClientLabel)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 324, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -129,11 +127,11 @@ public class PrivateChatWindow extends javax.swing.JFrame {
 
     private void formWindowClosed(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosed
         // close window
-        // TODO notify server that the chat has ended
+        ClientHandler.getInstance().removePrivateChatWindow(chattingClientName);
         this.dispose();
     }//GEN-LAST:event_formWindowClosed
 
-    private void displayNewChatMessage(String message){
+    public void displayNewChatMessage(String message) {
         msgDisplayTextArea.append(message);
     }
     
@@ -173,10 +171,10 @@ public class PrivateChatWindow extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JLabel chattingClientLabel;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTextArea msgDisplayTextArea;
     private javax.swing.JTextField msgInputTextField;
-    private javax.swing.JLabel selectedClientLabel;
     private javax.swing.JButton sendButton;
     // End of variables declaration//GEN-END:variables
 }
