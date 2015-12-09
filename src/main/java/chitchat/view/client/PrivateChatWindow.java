@@ -109,6 +109,8 @@ public class PrivateChatWindow extends javax.swing.JFrame {
                 .addContainerGap())
         );
 
+        msgDisplayTextArea.setAutoscrolls(true);
+
         pack();
     }// </editor-fold>//GEN-END:initComponents
 

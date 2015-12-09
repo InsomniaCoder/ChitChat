@@ -263,6 +263,8 @@ public class ServerPanel extends JFrame {
                 .addContainerGap())
         );
 
+        logTextArea.setAutoscrolls(true);
+
         pack();
     }// </editor-fold>//GEN-END:initComponents
 

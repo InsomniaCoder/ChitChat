@@ -284,6 +284,8 @@ public class ClientPanel extends javax.swing.JFrame {
                 .addGap(19, 19, 19))
         );
 
+        msgDisplayTextArea.setAutoscrolls(true);
+
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
@@ -309,6 +311,9 @@ public class ClientPanel extends javax.swing.JFrame {
     private void sendButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_sendButtonMouseClicked
         // click send button to send message to chat room
         String message = msgInputTextField.getText();
+        if(message.length() == 0){
+            return;
+        }
         try {
             ClientHandler.getInstance().announce(message);
         } catch (IOException e) {
@@ -320,6 +325,9 @@ public class ClientPanel extends javax.swing.JFrame {
     private void msgInputTextFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_msgInputTextFieldActionPerformed
         // press Enter to send message to chat room
         String message = msgInputTextField.getText();
+        if(message.length() == 0){
+            return;
+        }
         try {
             ClientHandler.getInstance().announce(message);
         } catch (IOException e) {
