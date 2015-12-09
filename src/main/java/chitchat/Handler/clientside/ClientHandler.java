@@ -110,6 +110,22 @@ public class ClientHandler {
         System.out.println("reply I'M OK");
     }
 
+    public void displayPrivateChat(String senderClientName, String message) throws IOException {
+
+        if (privateChatWindowMap.containsKey(senderClientName)) {
+            //send message to the window
+            PrivateChatWindow window = privateChatWindowMap.get(senderClientName);
+            window.displayNewChatMessage(senderClientName+" : "+message+"\n");
+        } else {
+            // no private window for this client. open the window.
+            PrivateChatWindow window = new PrivateChatWindow(clientPanel.getUserName(), senderClientName);
+            privateChatWindowMap.put(senderClientName, window);
+            window.setVisible(true);
+            //send message to the window
+            window.displayNewChatMessage(senderClientName+" : "+message+"\n");
+        }
+    }
+
     /*
      */    /**
      * requesting new list

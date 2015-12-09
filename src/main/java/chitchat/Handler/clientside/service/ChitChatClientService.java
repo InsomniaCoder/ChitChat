@@ -120,18 +120,7 @@ public class ChitChatClientService implements Runnable {
      * @param message
      */
     private void doPrivate(String senderClientName, String message) throws IOException {
-        if (ClientHandler.getInstance().getPrivateChatWindowMap().containsKey(senderClientName)) {
-            //send message to the window
-            PrivateChatWindow window = ClientHandler.getInstance().getPrivateChatWindowMap().get(senderClientName);
-            window.displayNewChatMessage(senderClientName+" : "+message+"\n");
-        } else {
-            // no private window for this client. open the window.
-            PrivateChatWindow window = new PrivateChatWindow(clientPanel.getUserName(), senderClientName);
-            ClientHandler.getInstance().getPrivateChatWindowMap().put(senderClientName, window);
-            window.setVisible(true);
-            //send message to the window
-            window.displayNewChatMessage(senderClientName+" : "+message+"\n");
-        }
+       ClientHandler.getInstance().displayPrivateChat(senderClientName,message);
     }
 
 }
